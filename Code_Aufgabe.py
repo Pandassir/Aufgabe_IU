@@ -52,5 +52,15 @@ plt.show()
 
 
 #3. Finden der geschlossenen Funktion:
+
+print(df.iloc[:200]['x'])
+    
+x = df.iloc[:200]['x']
+y = df.iloc[:200]['y1']
+
+coef = np.polyfit(x,y,1)
+poly1d_fn = np.poly1d(coef) 
+plt.plot(poly1d_fn(x), '-b')
+
     
     
