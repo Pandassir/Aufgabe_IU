@@ -58,9 +58,21 @@ print(df.iloc[:200]['x'])
 x = df.iloc[:200]['x']
 y = df.iloc[:200]['y1']
 
-coef = np.polyfit(x,y,1)
-poly1d_fn = np.poly1d(coef) 
-plt.plot(poly1d_fn(x), '-b')
 
+mean_x = np.mean(x)
+mean_y = np.mean(y)
     
-    
+n = len(x)  
+
+numer = 0
+denom = 0
+
+for i in range(n):
+    numer += (x[i]-mean_x) * (y[i]-mean_y)
+    denom += (x[i]-mean_x)**2
+m = numer/denom
+c = mean_y - (m * mean_x)
+print(f'Coefficents: m = {m} and c = {c}')
+
+y_pred = m*x+c
+plt.plot([min(x),max(x)],[min(y_pred),max(y_pred)])
