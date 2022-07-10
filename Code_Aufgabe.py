@@ -53,26 +53,79 @@ plt.show()
 
 #3. Finden der geschlossenen Funktion:
 
-print(df.iloc[:200]['x'])
-    
-x = df.iloc[:200]['x']
-y = df.iloc[:200]['y1']
+''' Least Square für  y1 bzw. der V-Form:'''
+x = df.iloc[:]['x']
+y = df.iloc[:]['y1']
 
 
-mean_x = np.mean(x)
-mean_y = np.mean(y)
-    
-n = len(x)  
+z = np.polyfit(x, y, 200)
+p = np.poly1d(z)
 
-numer = 0
-denom = 0
+xp = np.linspace(-19, 19, 100)
+plt.plot(x, y, '.', xp, p(xp))
+plt.show()
 
-for i in range(n):
-    numer += (x[i]-mean_x) * (y[i]-mean_y)
-    denom += (x[i]-mean_x)**2
-m = numer/denom
-c = mean_y - (m * mean_x)
-print(f'Coefficents: m = {m} and c = {c}')
+''' Least Square für  y2 bzw. der Geraden:'''
+x = df.iloc[:]['x']
+y = df.iloc[:]['y2']
 
-y_pred = m*x+c
-plt.plot([min(x),max(x)],[min(y_pred),max(y_pred)])
+
+z = np.polyfit(x, y, 200)
+p = np.poly1d(z)
+
+xp = np.linspace(-19, 19, 10)
+plt.plot(x, y, '.', xp, p(xp))
+plt.show()
+
+''' Least Square für  y3 bzw. der Sinus-Kurve:'''
+x = df.iloc[:]['x']
+y = df.iloc[:]['y3']
+
+
+z = np.polyfit(x, y, 200)
+p = np.poly1d(z)
+
+xp = np.linspace(-16, 16, 10000)
+plt.plot(x, y, '.', xp, p(xp))
+plt.show()
+
+''' Least Square für  y4 bzw. der flacheb V-Form:'''   
+x = df.iloc[:]['x']
+y = df.iloc[:]['y4']
+
+
+z = np.polyfit(x, y, 200)
+p = np.poly1d(z)
+
+
+xp = np.linspace(-19, 19, 50)
+plt.plot(x, y, '.', xp, p(xp))
+plt.show()
+
+#3.1 Visualisierung der berechneten Funktionen:
+'''Zur Visualisierung wurde folgende Quelle verwendet:
+    https://www.youtube.com/watch?v=BIO7_uro2CQ'''
+
+x = df.iloc[:]['x']
+y = df.iloc[:]['y1']
+
+fig, axs = plt.subplots(nrows=2, ncols=2, constrained_layout=True)
+fig.suptitle('Datenplot und erhaltene Funktion')
+axs[0][0].set_title('Funktion y1')
+axs[0][1].set_title('Funktion y2')
+axs[1][0].set_title('Funktion y3')
+axs[1][1].set_title('Funktion y4')
+#axs[2][0].set_title('Datensatz y3')
+#axs[2][1].set_title('Fubktion y3')
+#axs[3][0].set_title('Datensatz y4')
+#axs[3][1].set_title('Funktion y4')
+
+axs[0][0].plot(x,y)
+axs[0][1].plot(x,y)
+axs[1][0].plot(x,y)
+axs[1][1].plot(x,y)
+#axs[2][0].set_title('Datensatz y3')
+#axs[2][1].set_title('Fubktion y3')
+#axs[3][0].set_title('Datensatz y4')
+#axs[3][1].set_title('Funktion y4')
+
