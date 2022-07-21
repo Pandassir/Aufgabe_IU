@@ -17,14 +17,26 @@ print('Handelt es sich bei df_ideal um einen  Dataframe?:',(isinstance(df_train,
 
 #1.2 Einlesen der idealen Funktionen:
 df_ideal = pd.read_csv('Datensatz/ideal.csv')
-print('Spalten vom Idealdatensatz:','\n',df_ideal.columns.values.tolist())
+print('Spalten vom originalen Idealdatensatz:','\n',df_ideal.columns.values.tolist())
 print('Handelt es sich bei df_train um einen  Dataframe?:',(isinstance(df_ideal, pd.DataFrame)),'\n')
+print(df_ideal)
+
 
 #1.3 Entfernung der x-Spalte vom idealen Datensatz:
 df_ideal.drop(['x'], axis = 1, inplace = True) #https://www.delftstack.com/de/howto/python-pandas/pandas-drop-columns-by-index/
 print('Spalten vom neuen Idealdatensatz:','\n',df_ideal.columns.values.tolist())
+print(df_ideal)
 
 
+
+#1.4 Einlesen der Testdaten:
+df_test = pd.read_csv('Datensatz/test.csv')
+df_test = df_test.sort_values(by=['x'], ascending=True) # nach absteigender Reihenfolge sortieren, https://www.delftstack.com/de/api/python-pandas/pandas-dataframe-dataframe.sort_values-function/
+print('Spalten vom Testdatensatz:','\n',df_test.columns.values.tolist())
+print('Handelt es sich bei df_test um einen  Dataframe?:',(isinstance(df_test, pd.DataFrame)),'\n')  
+print(df_test) 
+    
+    
 
 #2 Finden der idealen Funktion:
 #2. Bilden der Differrenzen:
@@ -57,6 +69,9 @@ index_min3 = (diff_list3.index(min(diff_list3)))
 index_min4 = (diff_list4.index(min(diff_list4)))
 
 print(index_min1)
+print(index_min2)
+print(index_min3)
+print(index_min4)
 
 print(df_ideal.iloc[:,index_min1])
 
@@ -109,3 +124,55 @@ axs[2][1].legend(['ideal Funktion zu y3'])
 axs[3][0].legend(['Datenpunkte verauscht y4'])
 axs[3][1].legend(['ideal Funktion zu y4'])
 plt.show()
+
+
+#3.2 Visualisierung des Testdatensatzes:
+fig, axs = plt.subplots(nrows=1, ncols=1, constrained_layout=True, figsize=(10,8))
+fig.suptitle('Testdatensatz', fontsize = 20)
+axs.set(xlabel='x - Achse', ylabel='y - Achse')
+axs.scatter(df_test['x'],df_test['y'],color= 'black', linewidth=0.1 ) # Hier wurde plot gegen scatter getauscht, https://www.geeksforgeeks.org/matplotlib-axes-axes-scatter-in-python/
+axs.grid(visible=True, which='major', axis='both', color='white', linestyle='-', linewidth=1)
+axs.set_facecolor('LightGray')
+axs.legend(['Testdaten'], fontsize = 15, facecolor='white') #facecolor https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html
+
+
+
+
+
+#4. Suchen vom maximalen Delta der einzelnen Datenpunkte in der Trainingsdaten
+# vs. idealen Daten:
+print('AB HIER DIE FUNKTION')
+
+
+
+    
+def max_delta(trainingsdaten, index_min_ideal):
+    return ((df_train[str(trainingsdaten)]-df_ideal.iloc[:,index_min_ideal])**2).max()
+     
+#wenn der Doppelpunkt weg ist, iteriert er nur einmal die komplette Spalete /df_ideal.iloc[index_min_ideal] bei df_ideal.iloc[:,index_min_ideal] iteriert 400x!
+import math
+
+max_diff_y1 = (max_delta('y1',index_min1))*(math.sqrt(2))
+max_diff_y2 = (max_delta('y2',index_min2))*(math.sqrt(2))
+max_diff_y3 = (max_delta('y3',index_min3))*(math.sqrt(2))
+max_diff_y4 = (max_delta('y4',index_min4))*(math.sqrt(2))
+print (max_diff_y1)
+print (max_diff_y2)
+print (max_diff_y3)
+print (max_diff_y4)
+    
+def find_curve_in_testset():
+    mylist=[]
+    for num in df_test['x']:
+        if ((num-df_train['x'])**2) < 0.36:
+            mylist.append((num-df_train['x'])**2)
+    return mylist
+            
+x = find_curve_in_testset()
+print(len(x))
+
+
+
+    
+    
+    
