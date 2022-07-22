@@ -171,10 +171,13 @@ max_diff_y1 = (max_delta('y1',index_min1))*(math.sqrt(2))
 max_diff_y2 = (max_delta('y2',index_min2))*(math.sqrt(2))
 max_diff_y3 = (max_delta('y3',index_min3))*(math.sqrt(2))
 max_diff_y4 = (max_delta('y4',index_min4))*(math.sqrt(2))
-print (max_diff_y1)
-print (max_diff_y2)
-print (max_diff_y3)
-print (max_diff_y4)
+
+def show_max_delta():
+    print (max_diff_y1)
+    print (max_diff_y2)
+    print (max_diff_y3)
+    print (max_diff_y4)
+#show_max_delta()
     
 df_test_sort = df_test.sort_values(by=['x'], ascending=True)
 print(df_ideal2)
