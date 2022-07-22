@@ -10,11 +10,12 @@ print(pd.__version__)
 
 
 ''' Einlesem der CSV Datei'''
-#1. Einlesen vom Trainingsdatensatz:
+#1. Einlesen vom Trainingsdatensatz: #https://pynative.com/python-pandas-read-csv/
 df_train = pd.read_csv("Datensatz/train.csv")
 
 #1.2 Einlesen der idealen Funktionen:
 df_ideal = pd.read_csv('Datensatz/ideal.csv')
+df_ideal2 = pd.read_csv('Datensatz/ideal.csv')
 
 #1.3 Entfernung der x-Spalte vom idealen Datensatz:
 df_ideal.drop(['x'], axis = 1, inplace = True) #https://www.delftstack.com/de/howto/python-pandas/pandas-drop-columns-by-index/
@@ -175,28 +176,10 @@ print (max_diff_y2)
 print (max_diff_y3)
 print (max_diff_y4)
     
-def min_list():
-    mylist = []
-    for num in df_test['x']:
-        x = math.sqrt((num-df_train['x'])**2)
-        y = abs(x)
-        mylist.append(min(y))
-        
-    return mylist
-x = min_list()
-print(sorted(x))
+df_test_sort = df_test.sort_values(by=['x'], ascending=True)
+print(df_ideal2)
 
-def test():
-    mylist = []
-    for num in x:
-        if num < 0.36:
-            mylist.append(num)
-    return mylist
-x = test()
-print(x)
-
-print(abs(df_train['x']-df_ideal['y36']))
-
+print(df_test_sort.merge(df_ideal2, on = 'x'))
     
     
     
