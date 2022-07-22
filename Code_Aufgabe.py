@@ -31,7 +31,7 @@ print(df_ideal)
 
 #1.4 Einlesen der Testdaten:
 df_test = pd.read_csv('Datensatz/test.csv')
-df_test = df_test.sort_values(by=['x'], ascending=True) # nach absteigender Reihenfolge sortieren, https://www.delftstack.com/de/api/python-pandas/pandas-dataframe-dataframe.sort_values-function/
+#df_test = df_test.sort_values(by=['x'], ascending=True) # nach absteigender Reihenfolge sortieren, https://www.delftstack.com/de/api/python-pandas/pandas-dataframe-dataframe.sort_values-function/
 print('Spalten vom Testdatensatz:','\n',df_test.columns.values.tolist())
 print('Handelt es sich bei df_test um einen  Dataframe?:',(isinstance(df_test, pd.DataFrame)),'\n')  
 print(df_test) 
@@ -161,17 +161,23 @@ print (max_diff_y2)
 print (max_diff_y3)
 print (max_diff_y4)
     
-def find_curve_in_testset():
-    mylist=[]
+print(min(df_test.iloc[0,0]-df_train['x'])**2)
+def min_list():
+    mylist = []
     for num in df_test['x']:
-        if ((num-df_train['x'])**2) < 0.36:
-            mylist.append((num-df_train['x'])**2)
+        mylist.append(min(num-df_train['x'])**2)
     return mylist
-            
-x = find_curve_in_testset()
-print(len(x))
+x = min_list()
+print(x)
 
-
+def test():
+    mylist = []
+    for num in x:
+        if num < 0.36:
+            mylist.append(num)
+    return mylist
+x = test()
+print(x)
 
     
     
