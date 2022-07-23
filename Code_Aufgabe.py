@@ -79,13 +79,13 @@ index_min3 = (diff_list3.index(min(diff_list3)))
 index_min4 = (diff_list4.index(min(diff_list4)))
 
 def index_min_show():
-    print(index_min1)
-    print(index_min2)
-    print(index_min3)
-    print(index_min4)
+    print('Der Index zur spitzen V-Funktion ist:',index_min1, '--> y'+str(index_min1+1), 'im Idealdatensatz!') #Anmerkung: Das x wurde entfernt aus df_ideal!!
+    print('Der Index zur linearen Funktion ist:',index_min2, '--> y'+str(index_min2+1), 'im Idealdatensatz!')
+    print('Der Index zur sinusförmigen Funktion ist:',index_min3, '--> y'+str(index_min3+1), 'im Idealdatensatz!')
+    print('Der Index zur abgestumpften V-Funktion ist:',index_min4, '--> y'+str(index_min4+1), 'im Idealdatensatz!', '\n')
 
-    print(df_ideal.iloc[:,index_min1])
-# index_min_show()
+    #print(df_ideal.iloc[:,index_min4])
+index_min_show()
 
     
 #3. Visualisierung der grfundenen idealen Funktionen:
@@ -180,9 +180,16 @@ def show_max_delta():
 #show_max_delta()
     
 df_test_sort = df_test.sort_values(by=['x'], ascending=True)
-print(df_ideal2)
+df_merged_test = df_test_sort.merge(df_ideal2, on = 'x')
 
-print(df_test_sort.merge(df_ideal2, on = 'x'))
-    
-    
+df_merged_test.drop(columns = df_merged_test.columns[[2,4,5,6,7,8,9,10,11,13,14,15,16,17,18,19,20,
+                                                      21,22,23,24,25,26,27,28,29,30,31,32,33,35,36,
+                                                      38,39,40,41,42,43,44,45,46,47,48,49,50,51]], 
+                    inplace = True)
+
+df_merged_test.insert(loc=3, column = 'Diff y2', value =abs(df_merged_test['y']-df_merged_test['y2'])) #https://www.youtube.com/watch?v=IKiDSOUTQX8
+df_merged_test.insert(loc=5, column = 'Diff y11', value =True)
+df_merged_test.insert(loc=7, column = 'Diff y33', value =True)
+df_merged_test.insert(loc=9, column = 'Diff y36', value =True)
+print(df_merged_test)
     
