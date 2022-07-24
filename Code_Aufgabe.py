@@ -157,7 +157,7 @@ def vis_testdata():
 
 #4. Suchen vom maximalen Delta der einzelnen Datenpunkte in der Trainingsdaten
 # vs. idealen Daten:
-print('AB HIER DELTA')
+
 
 
     
@@ -173,53 +173,64 @@ max_diff_y3 = (max_delta('y3',index_min3))*(math.sqrt(2))
 max_diff_y4 = (max_delta('y4',index_min4))*(math.sqrt(2))
 
 def show_max_delta():
-    print (max_diff_y1)
-    print (max_diff_y2)
-    print (max_diff_y3)
-    print (max_diff_y4)
+    print ('Hier die max. Differenzen:')
+    print (f'Abweichung y1(train) zu y{index_min1+1}(ideal): ',max_diff_y1)
+    print (f'Abweichung y1(train) zu y{index_min2+1}(ideal): ',max_diff_y2)
+    print (f'Abweichung y1(train) zu y{index_min3+1}(ideal): ',max_diff_y3)
+    print (f'Abweichung y1(train) zu y{index_min4+1}(ideal): ',max_diff_y4)
+    print ('Die max. allgemeine Abweichung wird zu 0,71 festgelegt.')
 show_max_delta()
 
 
 
-
-'''Hier wird mit der merge Methode der Testdatensatz und der ideale Datensatz,
-zusammengelegt. Dabei wurde x als Variable gewählt. Pandas sucht hier die 
-gemeinsame Schnittmenge der x- Werte und die restlichen x-Werte fliegen raus!'''   
-df_test_sort = df_test.sort_values(by=['x'], ascending=True)
-df_merged_test = df_test_sort.merge(df_ideal2, on = 'x')
-
-
-
-'''Hier werden alle ünnötigen Spalten entfernt. Es intressieren nur die 4 relevanten idealen Funktionen:'''
-df_merged_test.drop(columns = df_merged_test.columns[[2,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
-                                                      21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,
-                                                      37,38,39,40,41,42,43,44,45,46,47,48,49,50,51]], 
-                    inplace = True)
-
-
-
-'''Hier wurden 4 Spalten mit den Differenzen vom Testdatensatz zu Idealdatensazt hinzugefügt. '''
-df_merged_test.insert(loc=3, column = 'Diff y2', value =abs(df_merged_test['y']-df_merged_test['y2'])) #https://www.youtube.com/watch?v=IKiDSOUTQX8
-#df_merged_test.insert(loc=5, column = 'Diff y11', value =abs(df_merged_test['y']-df_merged_test['y11']))
-#f_merged_test.insert(loc=7, column = 'Diff y33', value =abs(df_merged_test['y']-df_merged_test['y33']))
-#df_merged_test.insert(loc=9, column = 'Diff y36', value =abs(df_merged_test['y']-df_merged_test['y36']))
-print(df_merged_test)
-
-print(df_merged_test['Diff y2'].loc[df_merged_test['Diff y2'] <= 0.70])
-
-df_mask=df_merged_test['Diff y2']<= 0.7
-filtered_df = df_merged_test[df_mask]
-print(filtered_df)
+def val():
+    
+    while True:
+        '''Hier wird mit der merge Methode der Testdatensatz und der ideale Datensatz,
+        zusammengelegt. Dabei wurde x als Variable gewählt. Pandas sucht hier die 
+        gemeinsame Schnittmenge der x- Werte und die restlichen x-Werte fliegen raus!'''
+        df_test_sort = df_test.sort_values(by=['x'], ascending=True)
+        df_merged_test = df_test_sort.merge(df_ideal2, on = 'x')
+        
+        ''' Initialisierung einer Liste, welche später hilft Spalten zu e
+        entfernen'''
+        remove_list = list(range(2,52))
+        num = int(input('Für welchen idealen Datensatz wollen Sie die dazugehörigen'
+                    'Testdaten?\nWähle zwischen y2,y11,y33 oder y36.\n'
+                    'Hier die Eingabe y:'))
+        remove_list.remove(num+1)
+        '''Entfernung unnötiger Spalten aus DF'''
+        df_merged_test.drop(columns = df_merged_test.columns[remove_list], inplace = True) #Spalten entfernen
+        '''Einfügen der Abweichungsspalte'''
+        df_merged_test.insert(loc=3, column = f'Diff y{num}', value =abs(df_merged_test['y']-df_merged_test[f'y{num}'])) #https://www.youtube.com/watch?v=IKiDSOUTQX8
+        '''Erzeugung einer Maske mit Bedingungen'''
+        df_mask=df_merged_test[f'Diff y{num}']<= 0.71 #https://www.delftstack.com/de/howto/python-pandas/how-to-filter-dataframe-rows-based-on-column-values-in-pandas/
+        ''' Maske auf Dataframe anwenden'''
+        filtered_df = df_merged_test[df_mask]
             
-fig, axs = plt.subplots(nrows=1, ncols=1, constrained_layout=True, figsize=(10,10))
-fig.suptitle('Auswertung zu gefundenen idealen Funktionen', fontsize = 20)
+        fig, axs = plt.subplots(nrows=1, ncols=1, constrained_layout=True, figsize=(8,8))
+        fig.suptitle(f'Ideale Funktion y({num}) vs. Testdaten', fontsize = 20)
+        axs.set(xlabel='x - Achse', ylabel='y - Achse')        
+        axs.scatter(filtered_df['x'],filtered_df['y'])
+        if num == 2:
+            axs.plot(df_train['x'],df_ideal.iloc[:,index_min3], color = 'black')
+        elif num == 11:
+            axs.plot(df_train['x'],df_ideal.iloc[:,index_min2], color = 'black')
+        elif num == 33:
+            axs.plot(df_train['x'],df_ideal.iloc[:,index_min4], color = 'black')
+        else:
+            axs.plot(df_train['x'],df_ideal.iloc[:,index_min1], color = 'black')         
+        axs.legend([(f'ideale Funktion {num}'),('Testdaten (+/- 0,71)')], fontsize = 15, facecolor='white')
+        print(filtered_df)
+        plt.show()
+        
+        quest = str(input('Wollen Sie ein weiteren Datensatz auslesen? Y/N:'))
+        if quest.lower() == 'y':
+            continue
+        else:
+            break
+            
+#val()
 
-axs.set(title='verauschte Funktion y1', xlabel='x - Achse', ylabel='y - Achse')
-axs.set(title='ideale Funktion zu y1', xlabel='x - Achse', ylabel='y - Achse')    
 
-axs.scatter(filtered_df['x'],filtered_df['y'])
 
-axs.plot(df_train['x'],df_ideal.iloc[:,index_min3], color = 'black')    
-axs.legend([('ideale Funktion'),('Testdaten (+/- 0,7)')], fontsize = 15, facecolor='white')
-
-print(df_ideal)
