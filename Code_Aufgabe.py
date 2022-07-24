@@ -1,28 +1,34 @@
-#1. Traingsdaten einlesen
+#1. CSV-Dateien einlesen
 #2. Finden der idealen Funktiom mittels least square
 #3. Visualisierung der gefundenen idealen Funktionen
-
-def main():   
-    ''' laden der Bibliotheken zur Erstellumg der Dataframes'''
+#4. Suchen von der maximalen Abweichung von den Traingsdaten minus ideale Daten!
+#5. Präsentation Validierungsergebnis:
+    
+        
+    
+    
+   
+''' laden der Bibliotheken zur Erstellumg der Dataframes'''
 import pandas as pd
 import numpy as np
 print(pd.__version__)
 
 
-''' Einlesem der CSV Datei'''
-#1. Einlesen vom Trainingsdatensatz: #https://pynative.com/python-pandas-read-csv/
-df_train = pd.read_csv("Datensatz/train.csv")
 
+
+
+
+#1. Einlesen vom Trainingsdatensatz: #https://pynative.com/python-pandas-read-csv/
+''' Einlesem der CSV Datei'''
+df_train = pd.read_csv("Datensatz/train.csv")
 #1.2 Einlesen der idealen Funktionen:
 df_ideal = pd.read_csv('Datensatz/ideal.csv')
 df_ideal2 = pd.read_csv('Datensatz/ideal.csv')
-
 #1.3 Entfernung der x-Spalte vom idealen Datensatz:
 df_ideal.drop(['x'], axis = 1, inplace = True) #https://www.delftstack.com/de/howto/python-pandas/pandas-drop-columns-by-index/
-
 #1.4 Einlesen der Testdaten:
 df_test = pd.read_csv('Datensatz/test.csv')
-#df_test = df_test.sort_values(by=['x'], ascending=True) # nach absteigender Reihenfolge sortieren, https://www.delftstack.com/de/api/python-pandas/pandas-dataframe-dataframe.sort_values-function/
+
 
     
 def show_datasets():
@@ -32,7 +38,7 @@ def show_datasets():
     
     print('Spalten vom originalen Idealdatensatz:','\n',df_ideal.columns.values.tolist())
     print('Handelt es sich beim org. Idealdatensatz um einen  Dataframe?:',(isinstance(df_ideal, pd.DataFrame)),'\n')
-    print(df_ideal)
+    print(df_ideal2)
     
     print('Spalten vom neuen Idealdatensatz:','\n',df_ideal.columns.values.tolist())
     print(df_ideal)
@@ -42,53 +48,39 @@ def show_datasets():
     print(df_test) 
 # show_datasets()    
 
+
+
+
+
 #2 Finden der idealen Funktion:
-#2.1 Bilden der Differrenzen:
 ''' Hier wurde eine Funktion erstellt. Zuerst wurde eine leere Liste initialisiert.
-Mit der for - Schleife wurde jede Spalte im idealen Funktionen Datensatz itrtativ
-abgearbeitet. Die Summe der Differenzen zum quadrat wird in die Liste aufgenommen.'''
+Mit der for - Schleife wurde jede Spalte im idealen Funktionen Datensatz itertativ
+abgearbeitet. Die Summe der Differenzen zum quadrat wird in die Liste aufgenommen.
+Danach wird der Index der kleinsten Summe in der Tabelle ermittelt. Dieser
+Index + 1 ist der gesuchte ideale y-Datensatz.'''
 def delta(spalte_train):
     mylist=[] 
     
     for name in df_ideal:
         mylist.append(sum((df_train[str(spalte_train)]-df_ideal[str(name)])**2))
-    return mylist
+    #return mylist
+    index_min = (mylist.index(min(mylist)))
+    print(f' Zu den {spalte_train} Trainigsdaten gehört die ideale Fynktion: y{index_min +1}')
+    return index_min
 
 
-'''Erstellung der Differenzenlisten über die delta Funktion'''
+print(' Hier die gefundenen idealen Funktionen:')
+index_min1 = delta('y1')
+index_min2 = delta('y2')
+index_min3 = delta('y3')
+index_min4 = delta('y4')
+print('\n')
 
-diff_list1 = delta('y1')
-diff_list2 = delta('y2')
-diff_list3 = delta('y3')
-diff_list4 = delta('y4')
 
-def show_diff():
-    print('Differenzenliste 1')
-    print(diff_list1)
-    print(diff_list1.index(min(diff_list1)))
-    x =list(df_ideal.columns)
-    print(x)
-#show_diff()
 
-#2.1 Finden der minimalsten Abweichung:
-''' An dieser Stelle wird der kleinste Wert der einzelnen Differrenzenlisten 
-mittels der min Methode gesucht'''
-index_min1 = (diff_list1.index(min(diff_list1)))
-index_min2 = (diff_list2.index(min(diff_list2)))
-index_min3 = (diff_list3.index(min(diff_list3)))
-index_min4 = (diff_list4.index(min(diff_list4)))
-
-def index_min_show():
-    print('Der Index zur spitzen V-Funktion ist:',index_min1, '--> y'+str(index_min1+1), 'im Idealdatensatz!') #Anmerkung: Das x wurde entfernt aus df_ideal!!
-    print('Der Index zur linearen Funktion ist:',index_min2, '--> y'+str(index_min2+1), 'im Idealdatensatz!')
-    print('Der Index zur sinusförmigen Funktion ist:',index_min3, '--> y'+str(index_min3+1), 'im Idealdatensatz!')
-    print('Der Index zur abgestumpften V-Funktion ist:',index_min4, '--> y'+str(index_min4+1), 'im Idealdatensatz!', '\n')
-
-    #print(df_ideal.iloc[:,index_min4])
-index_min_show()
 
     
-#3. Visualisierung der grfundenen idealen Funktionen:
+#3. Visualisierung der gefundenen idealen Funktionen:
 '''Zur Visualisierung wurde die Bibliothek matplotlib verwendet. Es wurde ein
 Figure erstellt und anschlißend das Axes Object. Des Weiteren wurden Schönheits
 verbesserungen durchgeführt.'''
@@ -138,10 +130,12 @@ def vis_train_ideal():
     axs[3][0].legend(['Datenpunkte verauscht y4'])
     axs[3][1].legend(['ideal Funktion zu y4'])
     plt.show()
-#vis_train_ideal()
+vis_train_ideal()
+
+
+
 
 #3.2 Visualisierung des Testdatensatzes:
-
 def vis_testdata():
     fig, axs = plt.subplots(nrows=1, ncols=1, constrained_layout=True, figsize=(10,8))
     fig.suptitle('Testdatensatz', fontsize = 20)
@@ -150,23 +144,19 @@ def vis_testdata():
     axs.grid(visible=True, which='major', axis='both', color='white', linestyle='-', linewidth=1)
     axs.set_facecolor('LightGray')
     axs.legend(['Testdaten'], fontsize = 15, facecolor='white') #facecolor https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html
-
-#vis_testdata()
-
-
-
-#4. Suchen vom maximalen Delta der einzelnen Datenpunkte in der Trainingsdaten
-# vs. idealen Daten:
+    plt.show()
+vis_testdata()
 
 
 
-    
+
+
+#4. Suchen von der maximalen Abweichung von den Traingsdaten minus ideale Daten!
+''' '''    
 def max_delta(trainingsdaten, index_min_ideal):
     return abs((df_train[str(trainingsdaten)]-(df_ideal.iloc[:,index_min_ideal])).max()) # Mit abs auf das gesamte Ergebnis, bekommt man die positive wahre Differenz
      
-#wenn der Doppelpunkt weg ist, iteriert er nur einmal die komplette Spalete /df_ideal.iloc[index_min_ideal] bei df_ideal.iloc[:,index_min_ideal] iteriert 400x!
 import math
-
 max_diff_y1 = (max_delta('y1',index_min1))*(math.sqrt(2))
 max_diff_y2 = (max_delta('y2',index_min2))*(math.sqrt(2))
 max_diff_y3 = (max_delta('y3',index_min3))*(math.sqrt(2))
@@ -178,18 +168,21 @@ def show_max_delta():
     print (f'Abweichung y1(train) zu y{index_min2+1}(ideal): ',max_diff_y2)
     print (f'Abweichung y1(train) zu y{index_min3+1}(ideal): ',max_diff_y3)
     print (f'Abweichung y1(train) zu y{index_min4+1}(ideal): ',max_diff_y4)
-    print ('Die max. allgemeine Abweichung wird zu 0,71 festgelegt.')
+    print ('Die max. allgemeine Abweichung wird auf 0,71 festgelegt.')
 show_max_delta()
 
 
 
+
+
+#5. Präsentation Validierungsergebnis:
 def val():
     
     while True:
         '''Hier wird mit der merge Methode der Testdatensatz und der ideale Datensatz,
         zusammengelegt. Dabei wurde x als Variable gewählt. Pandas sucht hier die 
         gemeinsame Schnittmenge der x- Werte und die restlichen x-Werte fliegen raus!'''
-        df_test_sort = df_test.sort_values(by=['x'], ascending=True)
+        df_test_sort = df_test.sort_values(by=['x'], ascending=True) #nach absteigender Reihenfolge sortieren, https://www.delftstack.com/de/api/python-pandas/pandas-dataframe-dataframe.sort_values-function/
         df_merged_test = df_test_sort.merge(df_ideal2, on = 'x')
         
         ''' Initialisierung einer Liste, welche später hilft Spalten zu e
@@ -229,8 +222,7 @@ def val():
             continue
         else:
             break
-            
-#val()
+val()
 
 
 
