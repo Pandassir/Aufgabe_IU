@@ -130,7 +130,7 @@ def vis_train_ideal():
     axs[3][0].legend(['Datenpunkte verauscht y4'])
     axs[3][1].legend(['ideal Funktion zu y4'])
     plt.show()
-vis_train_ideal()
+#vis_train_ideal()
 
 
 
@@ -145,7 +145,7 @@ def vis_testdata():
     axs.set_facecolor('LightGray')
     axs.legend(['Testdaten'], fontsize = 15, facecolor='white') #facecolor https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html
     plt.show()
-vis_testdata()
+#vis_testdata()
 
 
 
@@ -169,7 +169,7 @@ def show_max_delta():
     print (f'Abweichung y1(train) zu y{index_min3+1}(ideal): ',max_diff_y3)
     print (f'Abweichung y1(train) zu y{index_min4+1}(ideal): ',max_diff_y4)
     print ('Die max. allgemeine Abweichung wird auf 0,71 festgelegt.')
-show_max_delta()
+#show_max_delta()
 
 
 
@@ -222,7 +222,21 @@ def val():
             continue
         else:
             break
-val()
+#val()
+
+#6. Hinzufügen der gefoderten Datensätze mySQL:
+# Import the neccessary modules
+from sqlalchemy import create_engine as ce
+
+# Verbindung zum MySQL-Server bei localhost mit PyMySQL DBAPI 
+engine  =  ce ( 'mysql+pymysql://root:pass123@localhost:3306/dfs_aufgabe' ) # https://overiq.com/sqlalchemy-101/installing-sqlalchemy-and-connecting-to-database/
+engine.connect()
+df_ideal2.to_sql('datensatz_ideal', engine)
+df_train.to_sql('datensatz_training', engine)
+
+# In My SQL Tabellen Abfragen : https://www.youtube.com/watch?v=mBFI7jm7eRg
+
+
 
 
 
