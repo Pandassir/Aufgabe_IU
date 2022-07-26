@@ -11,7 +11,7 @@
 ''' laden der Bibliotheken zur Erstellumg der Dataframes'''
 import pandas as pd
 import numpy as np
-print(pd.__version__)
+print('Welche pandas Version wird verwendet?:', pd.__version__,'\n')
 
 
 
@@ -28,25 +28,27 @@ df_ideal2 = pd.read_csv('Datensatz/ideal.csv')
 df_ideal.drop(['x'], axis = 1, inplace = True) #https://www.delftstack.com/de/howto/python-pandas/pandas-drop-columns-by-index/
 #1.4 Einlesen der Testdaten:
 df_test = pd.read_csv('Datensatz/test.csv')
-
+    
 
     
 def show_datasets():
-    print('Spalten vom Trainigsdatensatz:','\n',df_train.columns.values.tolist()) #Name der Spalte: https://www.delftstack.com/de/howto/python-pandas/how-to-get-pandas-dataframe-column-headers-as-a-list/
-    print('Handelt es sich bei df_ideal um einen  Dataframe?:',(isinstance(df_train, pd.DataFrame)),'\n')
-    print(df_train)
+    print('Trainingsdatensatz:','\n', df_train,'\n')
+    print('Spalten vom Trainigsdatensatz:','\n',df_train.columns.values.tolist(),'\n') #Name der Spalte: https://www.delftstack.com/de/howto/python-pandas/how-to-get-pandas-dataframe-column-headers-as-a-list/
+    print('Handelt es sich bei df_train um einen  Dataframe?:',(isinstance(df_train, pd.DataFrame)),'\n')
     
-    print('Spalten vom originalen Idealdatensatz:','\n',df_ideal.columns.values.tolist())
-    print('Handelt es sich beim org. Idealdatensatz um einen  Dataframe?:',(isinstance(df_ideal, pd.DataFrame)),'\n')
-    print(df_ideal2)
+    print('Idealdatensatz:','\n', df_ideal2,'\n')
+    print('Spalten vom originalen Idealdatensatz:','\n',df_ideal2.columns.values.tolist(),'\n')
+    print('Handelt es sich beim org. Idealdatensatz um einen  Dataframe?:',(isinstance(df_ideal2, pd.DataFrame)),'\n')
     
-    print('Spalten vom neuen Idealdatensatz:','\n',df_ideal.columns.values.tolist())
-    print(df_ideal)
+    print('Idealdatensatz x raus genommen:','\n', df_ideal,'\n')
+    print('Spalten vom neuen Idealdatensatz:','\n',df_ideal.columns.values.tolist(),'\n')
+    print('Handelt es sich beim gek. Idealdatensatz um einen  Dataframe?:',(isinstance(df_ideal, pd.DataFrame)),'\n')
     
-    print('Spalten vom Testdatensatz:','\n',df_test.columns.values.tolist())
+    print('Testdatensatz:','\n', df_test,'\n')
+    print('Spalten vom Testdatensatz:','\n',df_test.columns.values.tolist(),'\n')
     print('Handelt es sich beim Testdatensatz um einen  Dataframe?:',(isinstance(df_test, pd.DataFrame)),'\n')  
-    print(df_test) 
-# show_datasets()    
+    
+#show_datasets()    
 
 
 
@@ -65,11 +67,11 @@ def delta(spalte_train):
         mylist.append(sum((df_train[str(spalte_train)]-df_ideal[str(name)])**2))
     #return mylist
     index_min = (mylist.index(min(mylist)))
-    print(f' Zu den {spalte_train} Trainigsdaten gehört die ideale Fynktion: y{index_min +1}')
+    print(f'Zu den {spalte_train} Trainigsdaten gehört die ideale Fynktion: y{index_min +1}')
     return index_min
 
 
-print(' Hier die gefundenen idealen Funktionen:')
+print('Hier die gefundenen idealen Funktionen:')
 index_min1 = delta('y1')
 index_min2 = delta('y2')
 index_min3 = delta('y3')
@@ -224,19 +226,82 @@ def val():
             break
 #val()
 
-#6. Hinzufügen der gefoderten Datensätze mySQL:
-# Import the neccessary modules
-from sqlalchemy import create_engine as ce
 
+
+#6. Hinzufügen der gefoderten Datensätze mySQL'''
+''' Zuerst wurde aus Punkt 5 einen Teil vom Code entnommen und dafür verwendet
+die Dataframes mit den Abweichungen von den Testdaten zu Idealdaten zu bekommen.'''
+def get_selceted_df(num):
+        df_test_sort = df_test.sort_values(by=['x'], ascending=True) #nach absteigender Reihenfolge sortieren, https://www.delftstack.com/de/api/python-pandas/pandas-dataframe-dataframe.sort_values-function/
+        df_merged_test = df_test_sort.merge(df_ideal2, on = 'x')
+        
+        ''' Initialisierung einer Liste, welche später hilft Spalten zu e
+        entfernen'''
+        remove_list = list(range(2,52))
+        remove_list.remove(num+1)
+        '''Entfernung unnötiger Spalten aus DF'''
+        df_merged_test.drop(columns = df_merged_test.columns[remove_list], inplace = True) #Spalten entfernen
+        '''Einfügen der Abweichungsspalte'''
+        df_merged_test.insert(loc=3, column = f'Diff y{num}', value =abs(df_merged_test['y']-df_merged_test[f'y{num}'])) #https://www.youtube.com/watch?v=IKiDSOUTQX8
+        '''Erzeugung einer Maske mit Bedingungen'''
+        df_mask=df_merged_test[f'Diff y{num}']<= 0.71 #https://www.delftstack.com/de/howto/python-pandas/how-to-filter-dataframe-rows-based-on-column-values-in-pandas/
+        ''' Maske auf Dataframe anwenden'''
+        filtered_df = df_merged_test[df_mask]
+        return filtered_df
+    
+df_y2_selected = get_selceted_df(2)
+df_y11_selected = get_selceted_df(11)
+df_y33_selected = get_selceted_df(33)
+df_y36_selected = get_selceted_df(36)
+
+def show_sel():
+    print(df_y2_selected,'\n')
+    print(df_y11_selected,'\n')
+    print(df_y33_selected,'\n')
+    print(df_y36_selected,'\n')
+#show_sel()
+
+
+#def my_sql():
+#Import the neccessary modules
+from sqlalchemy import create_engine as ce
+# restlichen Dataframes hochladen
+# Alles genau dokumentieren
 # Verbindung zum MySQL-Server bei localhost mit PyMySQL DBAPI 
+''' DBAPI pymysql wurde zuerst über pip install pymysql installiert. Das hat 
+nicht funktioniert. Anschließend wurde pymysql in der Anaconda Umgebung installiert.
+Danach hat der Code funktioniert.'''
 engine  =  ce ( 'mysql+pymysql://root:pass123@localhost:3306/dfs_aufgabe' ) # https://overiq.com/sqlalchemy-101/installing-sqlalchemy-and-connecting-to-database/
 engine.connect()
 df_ideal2.to_sql('datensatz_ideal', engine)
 df_train.to_sql('datensatz_training', engine)
+df_test.to_sql('datensatz_test', engine)
+df_y2_selected.to_sql('datensatz_test_vs_y2_ideal', engine)
+df_y11_selected.to_sql('datensatz_test_vs_y11_ideal', engine)
+df_y33_selected.to_sql('datensatz_test_vs_y33_ideal', engine)
+df_y36_selected.to_sql('datensatz_test_vs_y36_ideal', engine)
+''' Die Tabellen können optional über diese Methode abgerufen werden'''
+#df = pd.read_sql_table('datensatz_ideal', engine)  #https://de.acervolima.com/lesen-sie-die-sql-datenbanktabelle-mit-sqlalchemy-in-einen-pandas-dataframe/
+#print(df)
+def show_html():
+    '''Zur Visualisierung wurde die Dataframes in MySQL visualisiert über 
+    select * from datensatz_ideal; und die Grafik wurde gespeichert. 
+    Diese Grafik wird hier visualisert:'''
+    # import module
+    import webbrowser   #https://www.geeksforgeeks.org/creating-and-viewing-html-files-with-python/
+    # open html file
+    webbrowser.open('datensatz_train.html')
+    webbrowser.open('datensatz_ideal.html')
+    webbrowser.open('datensatz_test.html')
+    webbrowser.open('datensatz_test_vs_y2_ideal.html')
+    webbrowser.open('datensatz_test_vs_y11_ideal.html')
+    webbrowser.open('datensatz_test_vs_y33_ideal.html')
+    webbrowser.open('datensatz_test_vs_y36_ideal.html')
+show_html()
+
+
+
+
+
 
 # In My SQL Tabellen Abfragen : https://www.youtube.com/watch?v=mBFI7jm7eRg
-
-
-
-
-
