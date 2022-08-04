@@ -1,13 +1,20 @@
+# 1.import datas managing from sqlite:
+
+import sqlalchemy as db
 import pandas as pd
-from sqlalchemy import create_engine as ce
+
+#2.-Turn on database engine
+dbEngine=db.create_engine('sqlite:///inputdb.db') # ensure this is the correct path for the sqlite file.
 
 ''' Hier wird eine Verbindung zu der Datenbank 'MySQL' hergestellt. Damit
 der Datentransfer von Datenbamk zu Python und umgekehrt ohne Probleme
 funktioniert wird Sqlalchemy verwendet. Dies ist eine Art Zwischenschicht
 und hilft den Datentransfer richtig zu organisieren'''
 
-engine = ce( 'mysql+pymysql://root:&5WdgSjT6$D/1W;u@localhost:3306/daten_iu') # https://overiq.com/sqlalchemy-101/installing-sqlalchemy-and-connecting-to-database/
-engine.connect()
+
+
+#3.- Read data with pandas
+
 
 class Datentabelle:  
     '''
@@ -17,48 +24,44 @@ class Datentabelle:
     
     def __init__(self, tablename):
         '''     
-
         Parameters
         ----------
         tablename : (string)
             Name der gewählten Tabelle
-
         Returns
         -------
         Initialisiert ein neues Objekt Datentabelle
-
         '''
         
         self.tablename = tablename # Name der 
                   
     def downlaod(self):
         '''        
-
         Returns
         -------
         Ladet aus MySQL die Tabelle in Python und wandelt die Tabelle mit
         Hilfe von Pandas in einen Dataframe um
         '''
 
-        return pd.read_sql(f'SELECT * FROM {self.tablename}', con=engine)
+        return pd.read_sql(f'select * from {self.tablename}',dbEngine)
         
         
-    def upload(self, dataframe):
+        
+    def upload_as(self, name):
         '''        
-
         Parameters
         ----------
         dataframe : Dataframe
             Als Parameter muss der gewünschte Dataframe angegeben werden
-
         Returns
         -------
         Ladet einen Dataframe in MySQL hoch
-
         '''
-        dataframe.to_sql(self.tablename, engine)
+        self.tablename.to_sql(name, dbEngine, if_exists='fail')
         
-        
+#df_train = Datentabelle('train') .downlaod() 
+#print(df_train) 
+#Datentabelle(df_train).upload_as('df_train')
         
         
         
@@ -71,18 +74,15 @@ class TrainDataProvider(Datentabelle):
     
     def __init__(self, y, tablename = 'train'):
         '''
-
         Parameters
         ----------
         y : (string)
             Name des gewählten y-Wertes
         tablename : (string)
             Name des Datendatzes
-
         Returns
         -------
         Initialisiert ein neues Objekt TrainDataProvider
-
         '''
         super().__init__(tablename = 'train')
         self.y = y
@@ -94,7 +94,6 @@ class TrainDataProvider(Datentabelle):
         -------
         Dataframe
             Hier entsteht ein Dataframe mit x und einem gewählten y-Wert
-
         '''
         #df_train = Datentabelle(self.tablename).downlaod() 
         df_train = pd.read_sql(f'SELECT * FROM {self.tablename}', con=engine)
@@ -123,7 +122,6 @@ class IdealFunktionProvider(TrainDataProvider):
             Name des gewählten y-Wertes
         tablename : (string)
             Name des Datendatzes
-
         Returns
         -------
         Initialisiert ein neues Objekt IdealFunktionProvider
@@ -158,41 +156,73 @@ class IdealFunktionProvider(TrainDataProvider):
     
     def show_dataframe(self):
         ''' 
-        Zeigt den gefundenen Dataframe an
+        Zeigt den Dataframe der gefundenen idealen Funktion an
         '''
         print(IdealFunktionProvider(self.y).find())
     
     def show_columnname(self):
         '''
-        Zeigt die oben gefundenen Werte an
+        Zeigt den Spaltennamen der oben gefundenen ideealen Funktion an
         '''
         
-        print(f'Zu den {self.y}-Werten vom Trainigsdaten gehört die ideale Fynktion:'
+        print(f'Zu den {self.y}-Werten vom Trainigsdaten gehört die ideale Funktion:'
               ,((IdealFunktionProvider(self.y).find()).columns[1]))
         
         
 
         
 class MaxDeltaFinder(TrainDataProvider):
+    
     '''
-    Hier ensteht eine Klasse, welche aus dem Testdatensatz die Datenpunkte
-    findet, welche zu der entsprechenden idealen Funktion gehört.
+    Hier ensteht eine Klasse, welche aus dem Trainigsdatendatz und dem 
+    Idealdatensatz die maximalen Abweichungen zwischen den  einzelnen 
+    Trainingsdatensätze y1-y4 und deren gefundenen idealen Funktionen ermittelt.
     '''
+    
     def __init__(self, y):
+        
+        '''
+        Parameters
+        ----------
+        y : (string)
+            Name des gewählten y-Wertes
+        
+        Returns
+        -------
+        Initialisiert ein neues Objekt TrainDataProvider
+        '''
+        
         super().__init__(y)
     
     def find(self):
-        import math
-        df_train_xy = TrainDataProvider(self.y).create()
-        df_train_xy.drop(['x'], axis = 1, inplace = True)
-        df_ideal = IdealFunktionProvider(self.y).find()
-        df_ideal.drop(['x'], axis = 1, inplace = True)
         
-        maxdelta = abs((df_train_xy.iloc[:,0]-df_ideal.iloc[:,0]).max())
+        '''
+        Returns
+        -------
+        Gibt die maximale Abweichung zwischen den einzelnen Trainingsdatensätze
+        (y1-y4) und den entsprechenden gefundenen Idealdatensätze aus. Diese
+        Abweichungen wurden mit dem Faktor sqrt(2) multipliziert. Diese Abweichung
+        wird als Grenze zur Selektion der Testdaten verwendet. Liegt der
+        der Datenpunkt unter der Abweichung gehört er zur idealen Funktion,
+        wenn nein, dann gehört dieser nicht dazu.
+        '''
+        
+        import math
+        df_train_xy = TrainDataProvider(self.y).create()                        # Laden des Trainingdatensatzes
+        #df_train_xy.drop(['x'], axis = 1, inplace = True)                      # Löschen der x -Spalte
+        df_ideal = IdealFunktionProvider(self.y).find()                         # Laden des Trainingdatensatzes
+        #df_ideal.drop(['x'], axis = 1, inplace = True)                         # Löschen der x -Spalte
+        
+        maxdelta = abs((df_train_xy.iloc[:,1]-df_ideal.iloc[:,1]).max())
         faktordelta = maxdelta*(math.sqrt(2))
         return faktordelta
     
     def show_maxdelta(self):
+        
+        '''
+        Zeigt den Zahlenwert der maximalen Abweichung an
+        '''
+        
         print(f'Die maximale Abweichung zwischen {self.y} und',
               (IdealFunktionProvider(self.y).find()).columns[1],'ist:',
               MaxDeltaFinder(self.y).find())
@@ -203,33 +233,208 @@ class MaxDeltaFinder(TrainDataProvider):
         
     
 class TrainDataFinder:
+    '''
+    Hier ensteht eine Klasse, welche zu einer Idealfunktion die passenden 
+    Testdaten aus dem kompletten Testdatensatz ermittelt.
+    '''
      
-     def __init__(self, y_idealfunktion):
-         self.y_idealfunktion = y_idealfunktion
+    def __init__(self, y_idealfunktion):
+        
+        '''
+        Parameters
+        ----------
+        y_idealfunktion : (string)
+            Spaltenname der gewählten idealen Funktion
+        
+        Returns
+        -------
+        Initialisiert ein neues Objekt TrainDataFinder
+        '''
+        
+        self.y_idealfunktion = y_idealfunktion
          
-     def find(self):
+    def find(self):
+        
+        '''
+        Returns
+        -------
+        Rückgabe eines Dataframes mit den x+y- Werten des Testdatensatzes,
+        der y - Werte von der gewählten idealen Funktion und die Differenz der 
+        beiden y -Werten. Alle Werte über der maximalen Abweichung werden
+        aussortiert.
+        '''
+        
+        md1 = MaxDeltaFinder('y1').find()                                       # Findet die maximale Abweichung zwischen y1-Traingsdatensatz und dem dazugehörigen Idealdatensatz
+        md2 = MaxDeltaFinder('y2').find()                                       # Findet die maximale Abweichung zwischen y2-Traingsdatensatz und dem dazugehörigen Idealdatensatz
+        md3 = MaxDeltaFinder('y3').find()                                       # Findet die maximale Abweichung zwischen y3-Traingsdatensatz und dem dazugehörigen Idealdatensatz
+        md4 = MaxDeltaFinder('y4').find()                                       # Findet die maximale Abweichung zwischen y4-Traingsdatensatz und dem dazugehörigen Idealdatensatz
          
-        df_test = Datentabelle('test').downlaod()  
-        df_ideal = Datentabelle('ideal').downlaod()
-        df_merged_test = df_test.merge(df_ideal, on = 'x')
-        df_merged_test.filter(['x','y', self.y_idealfunktion])
-        return df_merged_test.insert(loc=3, column = f'Diff {self.y_idealfunktion}', 
-                              value =abs(df_merged_test['y']-df_merged_test[self.y_idealfunktion])) #https://www.youtube.com/watch?v=IKiDSOUTQX8
+        md_avrg = (md1+md2+md3+md4)/4  
+         
+        df_test = Datentabelle('test').downlaod()                               # Laden der Testdaten 
+        df_ideal = Datentabelle('ideal').downlaod()                             # Laden der Idealdaten
+        df_merged_test = df_test.merge(df_ideal, on = 'x')                      # Zusammenfügen vom Testdatensatz und Idealdatensatz, aber nur die gemeinsamen x - Werte
+        df_merged_test.filter(['x','y', self.y_idealfunktion])                  # Erstellung eines Dateframes mit den x und y- Werten des Trainingsdatensatzes und den y- Werten des Idealdatendatzes
+        df_merged_test.insert(loc=3, column = f'Diff {self.y_idealfunktion}',   # Einfügen einer Spalte, welche die Differenz zwischen den y- Werten vom Trainingsdatensatz und dem Idealdatensatz anzeigt
+        value =abs(df_merged_test['y']-df_merged_test[self.y_idealfunktion]))   
         #df_mask=df_merged_test[f'Diff {self.y_idealfunktion}']<= 0.71
-        #filtered_df = df_merged_test[df_mask]
-        #return filtered_df
+        df_mask=df_merged_test[f'Diff {self.y_idealfunktion}']<= md_avrg        # Erstellung einer Maske wo nur Werte < max. Abweichung einer ausgewählten Spalte erstellt
+        filtered_df = df_merged_test[df_mask]                                   # Aktivierung der Maske auf den Dataframe. Übrig bleiben die Indexzeilen, der zuvor erstellten Spalte mit den gefilterten Werten
+        return filtered_df                                                      # Rückgabe eines Dataframes mit den x+y- Werten des Testdatensatzes, der y - Werte von der gewählten idealen Funktion und die Differenz der beiden y -Werten
     
+    def show(self):
+        
+        '''
+        Zeigt den gefilterten Dataframe an
+        '''
+        
+        print(TrainDataFinder(self.y_idealfunktion).find())
  
     
- 
+from matplotlib import pyplot as plt
+from matplotlib import style    
     
- 
+class IdealGraphProvider:
     
- 
     
- 
     
- 
+    def __init__(self, nrows = 4, ncolumns = 2, figsize = (10,10), 
+                 title = 'Gefundene ideale Funktionen', font = 20):
+        self.nrows = nrows
+        self.ncolumns = ncolumns
+        self.figsize = figsize
+        self.title = title
+        self.font = font
+                
+        
+    def show_idealfunctions(self):
+        
+        
+        style.use('ggplot')
+        fig, axs = plt.subplots(nrows=self.nrows, ncols=self.ncolumns, 
+                                constrained_layout=True, figsize=self.figsize)
+        fig.suptitle(self.title, fontsize = self.font)
+        
+        df_train = Datentabelle('train').downlaod() 
+        df_ideal = Datentabelle('ideal').downlaod()
+     
     
- 
+        axs[0][0].set(title='verauschte Funktion y1', xlabel='x - Achse', ylabel='y - Achse')
+        axs[0][1].set(title='ideale Funktion zu y1', xlabel='x - Achse', ylabel='y - Achse')
+        axs[1][0].set(title='verauschte Funktion y2', xlabel='x - Achse', ylabel='y - Achse')
+        axs[1][1].set(title='ideale Funktion zu y2', xlabel='x - Achse', ylabel='y - Achse')
+        axs[2][0].set(title='verauschte Funktion y3', xlabel='x - Achse', ylabel='y - Achse')
+        axs[2][1].set(title='ideale Funktion zu y3', xlabel='x - Achse', ylabel='y - Achse')
+        axs[3][0].set(title='verauschte Funktion y4', xlabel='x - Achse', ylabel='y - Achse')
+        axs[3][1].set(title='ideale Funktion zu y4', xlabel='x - Achse', ylabel='y - Achse')
+
+        axs[0][0].plot(df_train['x'],df_train['y1'])
+        axs[0][1].plot(df_ideal['x'],df_ideal['y36'], color = 'black')
+        axs[1][0].plot(df_train['x'],df_train['y2'])
+        axs[1][1].plot(df_train['x'],df_ideal['y11'], color = 'black')
+        axs[2][0].plot(df_train['x'],df_train['y3'])
+        axs[2][1].plot(df_train['x'],df_ideal['y2'], color = 'black')
+        axs[3][0].plot(df_train['x'],df_train['y4'])
+        axs[3][1].plot(df_train['x'],df_ideal['y33'], color = 'black')
+        
+        axs[0][0].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1) #https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.grid.html
+        axs[0][1].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
+        axs[1][0].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
+        axs[1][1].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
+        axs[2][0].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
+        axs[2][1].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
+        axs[3][0].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
+        axs[3][1].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
+        
+        axs[0][0].legend(['Datenpunkte verauscht y1']) #https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
+        axs[0][1].legend(['ideal Funktion zu y1'])
+        axs[1][0].legend(['Datenpunkte verauscht y2'])
+        axs[1][1].legend(['ideal Funktion zu y2'])
+        axs[2][0].legend(['Datenpunkte verauscht y3'])
+        axs[2][1].legend(['ideal Funktion zu y3'])
+        axs[3][0].legend(['Datenpunkte verauscht y4'])
+        axs[3][1].legend(['ideal Funktion zu y4'])
+        plt.show()
+        
+IdealGraphProvider().show_idealfunctions()
+        
+class TrainDataGraphProvider(IdealGraphProvider):
+        def __init__(self, nrows = 1, ncolumns = 1, figsize = (10,10), 
+                 title = 'Gefundene ideale Funktionen', font = 20):
+            super().__init__(nrows , ncolumns, figsize, 
+                     title , font)
+        
+        def show_traindatas(self):
+            style.use('ggplot')
+            fig, axs = plt.subplots(nrows=self.nrows, ncols=self.ncolumns, 
+                                    constrained_layout=True, figsize=self.figsize)
+            fig.suptitle(self.title, fontsize = self.font)
+            
+            df_test = Datentabelle('test').downlaod() 
+            
+            
+            axs.set(xlabel='x - Achse', ylabel='y - Achse')
+            axs.scatter(df_test['x'],df_test['y'],color= 'black', linewidth=0.1 ) # Hier wurde plot gegen scatter getauscht, https://www.geeksforgeeks.org/matplotlib-axes-axes-scatter-in-python/
+            axs.grid(visible=True, which='major', axis='both', color='white', linestyle='-', linewidth=1)
+            axs.set_facecolor('LightGray')
+            axs.legend(['Testdaten'], fontsize = 15, facecolor='white') #facecolor https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html
+            plt.show()
+            
+TrainDataGraphProvider().show_traindatas()
+
+
+class TestDataGraphProvider(IdealGraphProvider):
+    def __init__(self, nrows = 1, ncolumns = 1, figsize = (10,10), 
+             title ='Ideale Funktion y36 s. Testdaten', font = 20):
+        super().__init__(nrows , ncolumns, figsize, 
+                 title , font)
+        
+        def show_fitted_testdata(self, y_ideal):
+            style.use('ggplot')
+            fig, axs = plt.subplots(nrows=self.nrows, ncols=self.ncolumns, 
+                                    constrained_layout=True, figsize=self.figsize)
+            fig.suptitle(self.title, fontsize = self.font)
+            
+            
+            
+            filtered_df = TrainDataFinder(y_ideal).find()
+            df_ideal = Datentabelle('ideal').downlaod()
+            
+            
+            axs.set(xlabel='x - Achse', ylabel='y - Achse')        
+            axs.scatter(filtered_df['x'],filtered_df['y'])
+    
+            axs.plot(df_ideal['x'],df_ideal['y36'], color = 'black')
+                    
+            axs.legend([(f'ideale Funktion {y_ideal}'),('Testdaten (+/- 0,71)')],
+                       fontsize = 15, facecolor='white')
+            print(filtered_df)
+            plt.show()
+
+TestDataGraphProvider().show_fitted_testdata('y36')
+            
+    
+    
+        
+            
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
