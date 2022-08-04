@@ -1,10 +1,9 @@
 # 1.import datas managing from sqlite:
-
 import sqlalchemy as db
 import pandas as pd
 
-#2.-Turn on database engine
-dbEngine=db.create_engine('sqlite:///inputdb.db') # ensure this is the correct path for the sqlite file.
+# 1.1 turn on database engine:   
+dbEngine=db.create_engine('sqlite:///database.db')                               # ensure this is the correct path for the sqlite file.
 
 ''' Hier wird eine Verbindung zu der Datenbank 'MySQL' hergestellt. Damit
 der Datentransfer von Datenbamk zu Python und umgekehrt ohne Probleme
@@ -13,9 +12,7 @@ und hilft den Datentransfer richtig zu organisieren'''
 
 
 
-#3.- Read data with pandas
-
-
+# 1.2 create a class for downloading and uploading datas:
 class Datentabelle:  
     '''
     Hier entsteht eine Klasse Datentabelle. Dises Klasse soll dabei helfen
@@ -59,9 +56,9 @@ class Datentabelle:
         '''
         self.tablename.to_sql(name, dbEngine, if_exists='fail')
         
-#df_train = Datentabelle('train') .downlaod() 
-#print(df_train) 
-#Datentabelle(df_train).upload_as('df_train')
+df_train = Datentabelle('train') .downlaod() 
+print(df_train) 
+Datentabelle(df_train).upload_as('df_train')
         
         
         
