@@ -12,14 +12,16 @@ dbEngine=db.create_engine('sqlite:///database.db') # ensure this is the correct 
 
 #3.- Read data with pandas
 df_train = pd.read_sql('select * from train',dbEngine)
-df_test = pd.read_sql('select * from test',dbEngine)
-df_ideal = pd.read_sql('select * from ideal',dbEngine)
 
-#print(df_train)
-#print(df_test)
-#print(df_ideal)
-df_test.sort_values(by=['x'], inplace=True)
-df_merged_test = df_test.merge(df_ideal, on = 'x') 
+print(df_train)
 
-x = df_merged_test.filter(['x','y', 'y36']) 
-print(x)
+html = df_train.to_html()
+print(html)
+
+text_file = open("index.html", "w")
+text_file.write(html)
+text_file.close()
+
+
+import webbrowser
+webbrowser.open('index.html')
