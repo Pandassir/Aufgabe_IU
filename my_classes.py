@@ -191,7 +191,7 @@ class MaxDeltaFinder(TrainDataProvider):
     Trainingsdatensätze y1-y4 und deren gefundenen idealen Funktionen ermittelt.
     '''
         
-    def __init__(self, y_train):
+    def __init__(self, y_train = 1):
             
         '''
         Parameters
@@ -234,9 +234,12 @@ class MaxDeltaFinder(TrainDataProvider):
         Zeigt den Zahlenwert der maximalen Abweichung an
         '''
             
-        print(f'Die maximale Abweichung zwischen {self.y_train} und',
+        print(f'\nDie maximale Abweichung zwischen {self.y_train} und',
                 (IdealFunktionProvider(self.y_train).find()).columns[1],'ist:',
                  MaxDeltaFinder(self.y_train).find())
+    
+    def average_maxdelte(self):
+        print('\nAn average value of 0.71 is used for the next mathematical values')
     
   
         
@@ -286,7 +289,7 @@ class TestDataProvider:
         df_test.sort_values(by=['x'], inplace=True)                              # Laden der Idealdaten
         df_merged_test = df_test.merge(df_ideal, on = 'x')                      # Zusammenfügen vom Testdatensatz und Idealdatensatz, aber nur die gemeinsamen x - Werte
         df_merged_test = df_merged_test.filter(['x','y', self.y_idealfunktion])                  # Erstellung eines Dateframes mit den x und y- Werten des Trainingsdatensatzes und den y- Werten des Idealdatendatzes
-        df_merged_test.insert(loc=3, column = f'Diff {self.y_idealfunktion}',   # Einfügen einer Spalte, welche die Differenz zwischen den y- Werten vom Trainingsdatensatz und dem Idealdatensatz anzeigt
+        df_merged_test.insert(loc=2, column = f'Diff {self.y_idealfunktion}',   # Einfügen einer Spalte, welche die Differenz zwischen den y- Werten vom Trainingsdatensatz und dem Idealdatensatz anzeigt
         value =abs(df_merged_test['y']-df_merged_test[self.y_idealfunktion]))   
         #df_mask=df_merged_test[f'Diff {self.y_idealfunktion}']<= 0.71
         df_mask=df_merged_test[f'Diff {self.y_idealfunktion}']<= 0.71        # Erstellung einer Maske wo nur Werte < max. Abweichung einer ausgewählten Spalte erstellt
@@ -321,7 +324,7 @@ class IdealGraphProvider:
         
         
     def __init__(self, nrows = 4, ncolumns = 2, figsize = (10,10), 
-                     title = 'Gefundene ideale Funktionen', font = 20):
+                     title = 'Found ideal functions', font = 20):
         self.nrows = nrows
         self.ncolumns = ncolumns
         self.figsize = figsize
@@ -339,84 +342,97 @@ class IdealGraphProvider:
         df_ideal = DataTableProvider('ideal').downlaod()
          
         
-        axs[0][0].set(title='verauschte Funktion y1', xlabel='x - Achse', ylabel='y - Achse')
-        axs[0][1].set(title='ideale Funktion zu y1', xlabel='x - Achse', ylabel='y - Achse')
-        axs[1][0].set(title='verauschte Funktion y2', xlabel='x - Achse', ylabel='y - Achse')
-        axs[1][1].set(title='ideale Funktion zu y2', xlabel='x - Achse', ylabel='y - Achse')
-        axs[2][0].set(title='verauschte Funktion y3', xlabel='x - Achse', ylabel='y - Achse')
-        axs[2][1].set(title='ideale Funktion zu y3', xlabel='x - Achse', ylabel='y - Achse')
-        axs[3][0].set(title='verauschte Funktion y4', xlabel='x - Achse', ylabel='y - Achse')
-        axs[3][1].set(title='ideale Funktion zu y4', xlabel='x - Achse', ylabel='y - Achse')
+        axs[0][0].set(title='train data y1', xlabel='x - axis', 
+                      ylabel='y - axis')
+        axs[0][1].set(title='ideal function to y1', xlabel='x - axis',
+                      ylabel='y - axis')
+        axs[1][0].set(title='train data y2', xlabel='x - axis', 
+                      ylabel='y - axis')
+        axs[1][1].set(title='ideal function to y2', xlabel='x - axis', 
+                      ylabel='y - axis')
+        axs[2][0].set(title='train data y3', xlabel='x - axis', 
+                      ylabel='y - axis')
+        axs[2][1].set(title='ideal function to y3', xlabel='x - axis', 
+                      ylabel='y - axis')
+        axs[3][0].set(title='train data y4', xlabel='x - axis', 
+                      ylabel='y - axis')
+        axs[3][1].set(title='ideal function to y4', xlabel='x - axis', 
+                      ylabel='y - axis')
     
         axs[0][0].plot(df_train['x'],df_train['y1'])
-        axs[0][1].plot(df_ideal['x'],df_ideal['y36'], color = 'black')
+        axs[0][1].plot(df_ideal['x'],df_ideal[IdealFunktionProvider('y1').
+                                    return_columname()], color = 'black')
         axs[1][0].plot(df_train['x'],df_train['y2'])
-        axs[1][1].plot(df_train['x'],df_ideal['y11'], color = 'black')
+        axs[1][1].plot(df_train['x'],df_ideal[IdealFunktionProvider('y2').
+                                    return_columname()], color = 'black')
         axs[2][0].plot(df_train['x'],df_train['y3'])
-        axs[2][1].plot(df_train['x'],df_ideal['y2'], color = 'black')
+        axs[2][1].plot(df_train['x'],df_ideal[IdealFunktionProvider('y3').
+                                    return_columname()], color = 'black')
         axs[3][0].plot(df_train['x'],df_train['y4'])
-        axs[3][1].plot(df_train['x'],df_ideal['y33'], color = 'black')
+        axs[3][1].plot(df_train['x'],df_ideal[IdealFunktionProvider('y4').
+                                    return_columname()], color = 'black')
             
-        axs[0][0].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1) #https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.grid.html
-        axs[0][1].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
-        axs[1][0].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
-        axs[1][1].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
-        axs[2][0].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
-        axs[2][1].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
-        axs[3][0].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
-        axs[3][1].grid(visible=True, which='major', axis='both', color='LightGrey', linestyle='--', linewidth=1)
+        axs[0][0].grid(visible=True, which='major', axis='both', 
+                       color='LightGrey', linestyle='--', linewidth=1) #https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.grid.html
+        axs[0][1].grid(visible=True, which='major', axis='both', 
+                       color='LightGrey', linestyle='--', linewidth=1)
+        axs[1][0].grid(visible=True, which='major', axis='both', 
+                       color='LightGrey', linestyle='--', linewidth=1)
+        axs[1][1].grid(visible=True, which='major', axis='both', 
+                       color='LightGrey', linestyle='--', linewidth=1)
+        axs[2][0].grid(visible=True, which='major', axis='both', 
+                       color='LightGrey', linestyle='--', linewidth=1)
+        axs[2][1].grid(visible=True, which='major', axis='both', 
+                       color='LightGrey', linestyle='--', linewidth=1)
+        axs[3][0].grid(visible=True, which='major', axis='both', 
+                       color='LightGrey', linestyle='--', linewidth=1)
+        axs[3][1].grid(visible=True, which='major', axis='both', 
+                       color='LightGrey', linestyle='--', linewidth=1)
             
-        axs[0][0].legend(['Datenpunkte verauscht y1']) #https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
-        axs[0][1].legend(['ideal Funktion zu y1'])
-        axs[1][0].legend(['Datenpunkte verauscht y2'])
-        axs[1][1].legend(['ideal Funktion zu y2'])
-        axs[2][0].legend(['Datenpunkte verauscht y3'])
-        axs[2][1].legend(['ideal Funktion zu y3'])
-        axs[3][0].legend(['Datenpunkte verauscht y4'])
-        axs[3][1].legend(['ideal Funktion zu y4'])
-        plt.show()
-            
-    
-            
-class TrainDataGraphProvider(IdealGraphProvider):
-    def __init__(self, nrows = 1, ncolumns = 1, figsize = (10,10), 
-                 title = 'Gefundene ideale Funktionen', font = 20):
-        super().__init__(nrows , ncolumns, figsize, title , font)
-            
-    def show_traindatas(self):
-        style.use('ggplot')
-        fig, axs = plt.subplots(nrows=self.nrows, ncols=self.ncolumns, 
-                   constrained_layout=True, figsize=self.figsize)
-        fig.suptitle(self.title, fontsize = self.font)
-        df_test = DataTableProvider()('test').downlaod() 
-        axs.set(xlabel='x - Achse', ylabel='y - Achse')
-        axs.scatter(df_test['x'],df_test['y'],color= 'black', linewidth=0.1 ) # Hier wurde plot gegen scatter getauscht, https://www.geeksforgeeks.org/matplotlib-axes-axes-scatter-in-python/
-        axs.grid(visible=True, which='major', axis='both', color='white', linestyle='-', linewidth=1)
-        axs.set_facecolor('LightGray')
-        axs.legend(['Testdaten'], fontsize = 15, facecolor='white') #facecolor https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html
+        axs[0][0].legend(['train data y1']) #https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.legend.html
+        axs[0][1].legend(['ideal function to y1'])
+        axs[1][0].legend(['train data y2'])
+        axs[1][1].legend(['ideal function to y2'])
+        axs[2][0].legend(['train data y3'])
+        axs[2][1].legend(['ideal function to y3'])
+        axs[3][0].legend(['train data y4'])
+        axs[3][1].legend(['ideal function to y4'])
         plt.show()
                 
     
-    
-    
+     
 class TestDataGraphProvider(IdealGraphProvider):
-    def __init__(self, nrows = 1, ncolumns = 1, figsize = (10,10), 
-                 title ='Ideale Funktion y36 s. Testdaten', font = 20):
+    def __init__(self, y_ideal = 1, nrows = 1, ncolumns = 1, figsize = (10,10), 
+                 title ='Test data', font = 20):
         super().__init__(nrows , ncolumns, figsize, title , font)
-            
-    def show_fitted_testdata(self, y_ideal):
+        self.y_ideal = y_ideal
+        
+    def show_testdata(self):
         style.use('ggplot')
         fig, axs = plt.subplots(nrows=self.nrows, ncols=self.ncolumns, 
                    constrained_layout=True, figsize=self.figsize)
         fig.suptitle(self.title, fontsize = self.font)
-        filtered_df = TestDataProvider(y_ideal).find()
+        df_test = DataTableProvider('test').downlaod() 
+        axs.set(xlabel='x - axis', ylabel='y - axis')
+        axs.scatter(df_test['x'],df_test['y'],color= 'black', linewidth=0.1 ) # Hier wurde plot gegen scatter getauscht, https://www.geeksforgeeks.org/matplotlib-axes-axes-scatter-in-python/
+        axs.grid(visible=True, which='major', axis='both', color='white', linestyle='-', linewidth=1)
+        axs.set_facecolor('LightGray')
+        axs.legend(['test data'], fontsize = 15, facecolor='white') #facecolor https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html
+        plt.show()
+            
+    def show_fitted_testdata(self):
+        style.use('ggplot')
+        fig, axs = plt.subplots(nrows=self.nrows, ncols=self.ncolumns, 
+                   constrained_layout=True, figsize=self.figsize)
+        fig.suptitle(f"Fitted test data for ideal function {self.y_ideal}"
+                     , fontsize = self.font)
+        filtered_df = TestDataProvider(self.y_ideal).find()
         df_ideal = DataTableProvider('ideal') .downlaod() 
         axs.set(xlabel='x - Achse', ylabel='y - Achse')        
         axs.scatter(filtered_df['x'],filtered_df['y'])
-        axs.plot(df_ideal['x'],df_ideal[y_ideal], color = 'black')
-        axs.legend([(f'ideale Funktion {y_ideal}'),('Testdaten (+/- 0,71)')],
+        axs.plot(df_ideal['x'],df_ideal[self.y_ideal], color = 'black')
+        axs.legend([(f'Ideal function {self.y_ideal}'),('Test data (+/- 0,71)')],
                    fontsize = 15, facecolor='white')
-        print(filtered_df)
         plt.show()
     
 
