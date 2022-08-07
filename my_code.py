@@ -27,40 +27,40 @@ Description of main code:
     
 # 1.1 Display each train dataset:
 from my_classes import TrainDataProvider
-#TrainDataProvider('y1').show_dataframe()
-#TrainDataProvider('y2').show_dataframe()
-#TrainDataProvider('y3').show_dataframe()
-#TrainDataProvider('y4').show_dataframe()
+TrainDataProvider('y1').show_dataframe()
+TrainDataProvider('y2').show_dataframe()
+TrainDataProvider('y3').show_dataframe()
+TrainDataProvider('y4').show_dataframe()
 
 # 1.2 Display each found ideal function for each train dataset:
 from my_classes import IdealFunktionProvider
-#IdealFunktionProvider('y1').show_columnname()
-#IdealFunktionProvider('y2').show_columnname()
-#IdealFunktionProvider('y3').show_columnname()
-#IdealFunktionProvider('y4').show_columnname()
+IdealFunktionProvider('y1').show_columnname()
+IdealFunktionProvider('y2').show_columnname()
+IdealFunktionProvider('y3').show_columnname()
+IdealFunktionProvider('y4').show_columnname()
 
 # 1.3 Display each ideal function dataset:
-#IdealFunktionProvider('y1').show_dataframe()
-#IdealFunktionProvider('y2').show_dataframe()
-#IdealFunktionProvider('y3').show_dataframe()
-#IdealFunktionProvider('y4').show_dataframe()
+IdealFunktionProvider('y1').show_dataframe()
+IdealFunktionProvider('y2').show_dataframe()
+IdealFunktionProvider('y3').show_dataframe()
+IdealFunktionProvider('y4').show_dataframe()
 
 # 1.4 Display max. dirfference between train data and found ideal function:
 from my_classes import MaxDeltaFinder
-#MaxDeltaFinder('y1').show_maxdelta()
-#MaxDeltaFinder('y2').show_maxdelta()
-#MaxDeltaFinder('y3').show_maxdelta()
-#MaxDeltaFinder('y4').show_maxdelta()
-#('y4').show_maxdelta()
+MaxDeltaFinder('y1').show_maxdelta()
+MaxDeltaFinder('y2').show_maxdelta()
+MaxDeltaFinder('y3').show_maxdelta()
+MaxDeltaFinder('y4').show_maxdelta()
+MaxDeltaFinder().average_maxdelte()
 
 #axDeltaFinder().average_maxdelte()
 
 # 1.5 Display found test data for each ideal function:
 from my_classes import TestDataProvider
-#TestDataProvider(IdealFunktionProvider('y1').return_columname()).show_dataframe()
-#TestDataProvider(IdealFunktionProvider('y2').return_columname()).show_dataframe()
-#TestDataProvider(IdealFunktionProvider('y3').return_columname()).show_dataframe()
-#TestDataProvider(IdealFunktionProvider('y4').return_columname()).show_dataframe()
+TestDataProvider(IdealFunktionProvider('y1').return_columname()).show_dataframe()
+TestDataProvider(IdealFunktionProvider('y2').return_columname()).show_dataframe()
+TestDataProvider(IdealFunktionProvider('y3').return_columname()).show_dataframe()
+TestDataProvider(IdealFunktionProvider('y4').return_columname()).show_dataframe()
 
 
 
@@ -69,25 +69,24 @@ from my_classes import TestDataProvider
 
 # 2.1 Train data vs. ideal function:
 from my_classes import IdealGraphProvider
-#IdealGraphProvider().show_idealfunctions()
+IdealGraphProvider().show_idealfunctions()
 
 # 2.2 Test data:
 from my_classes import TestDataGraphProvider
-#TestDataGraphProvider().show_testdata()
+TestDataGraphProvider().show_testdata()
 
 # 2.3 Fitted test data vs. ideal function:
-#TestDataGraphProvider(IdealFunktionProvider('y1').
-                      #return_columname()).show_fitted_testdata()
-#TestDataGraphProvider(IdealFunktionProvider('y2').
-                      #return_columname()).show_fitted_testdata()
-#TestDataGraphProvider(IdealFunktionProvider('y3').
-                      #return_columname()).show_fitted_testdata()
-#TestDataGraphProvider(IdealFunktionProvider('y4').
-                      #return_columname()).show_fitted_testdata()
+TestDataGraphProvider(IdealFunktionProvider('y1').
+                      return_columname()).show_fitted_testdata()
+TestDataGraphProvider(IdealFunktionProvider('y2').
+                      return_columname()).show_fitted_testdata()
+TestDataGraphProvider(IdealFunktionProvider('y3').
+                      return_columname()).show_fitted_testdata()
+TestDataGraphProvider(IdealFunktionProvider('y4').
+                      return_columname()).show_fitted_testdata()
                       
 
 # 3. Upload results:
-from my_classes import DataTableProvider
 test1 = TestDataProvider(IdealFunktionProvider('y1').
                          return_columname()).return_dataframe()
 test2 = TestDataProvider(IdealFunktionProvider('y2').
@@ -97,10 +96,10 @@ test3 = TestDataProvider(IdealFunktionProvider('y3').
 test4 = TestDataProvider(IdealFunktionProvider('y4').
                          return_columname()).return_dataframe()
 
-DataTableProvider(test1).upload_as(f"fit{IdealFunktionProvider('y1').return_columname()}")
-DataTableProvider(test2).upload_as(f"fit{IdealFunktionProvider('y2').return_columname()}")
-DataTableProvider(test3).upload_as(f"fit{IdealFunktionProvider('y3').return_columname()}")
-DataTableProvider(test4).upload_as(f"fit{IdealFunktionProvider('y4').return_columname()}")
+#DataTableProvider(test1).upload_as(f"fit{IdealFunktionProvider('y1').return_columname()}")
+#DataTableProvider(test2).upload_as(f"fit{IdealFunktionProvider('y2').return_columname()}")
+#DataTableProvider(test3).upload_as(f"fit{IdealFunktionProvider('y3').return_columname()}")
+#DataTableProvider(test4).upload_as(f"fit{IdealFunktionProvider('y4').return_columname()}")
 
 # 4. Display tables from sqlite:
 from my_classes import HTMLProvider

@@ -19,7 +19,7 @@ the data transfer correctly.
 class DataTableProvider: 
     
     '''
-    This creates a class DataTableProvider. This class should help with this 
+    Creates a class DataTableProvider. This class should help with this 
     clearly download the tables from Sqlite and upload them vice versa.
     '''
         
@@ -72,10 +72,12 @@ df_test.sort_values(by=['x'], inplace=True)                                     
             
             
 class TrainDataProvider(DataTableProvider):
+    
     '''
-    Hier entsteht eine Klasse die die Erstellung eines Dataframes von x und dem
-    entsprechenden y Wert organisiert. Die restlichen Werte werden gefiltert.
-    Zudem wurde hier eine Vererbung der Klasse 'Datentabelle' eingebaut.
+    Creates a class that allows the creation of a dataframe of x and the 
+    corresponding y value. The remaining values are filtered. In 
+    addition, an inheritance of the class 'DataTableProvider' has been built 
+    in here.
     '''
         
     def __init__(self, y_train, tablename = 'train'):
@@ -115,11 +117,13 @@ class TrainDataProvider(DataTableProvider):
   
       
 class IdealFunktionProvider(TrainDataProvider):
+    
+    ''' 
+    Creates a class to find the ideal function for the training data. In 
+    addition, an inheritance of the class 'TrainDataProvider' has been 
+    established here built-in. 
     '''
-    Hier entstent eine Klasse die die ideale Funktion zu den Trainingsdaten
-    findet. Zudem wurde hier eine Vererbung der Klasse 'TrainDataProvider'
-    eingebaut.
-    '''
+    
     def __init__(self, y_train, tablename = 'train'):
         '''
             
@@ -186,9 +190,8 @@ class IdealFunktionProvider(TrainDataProvider):
 class MaxDeltaFinder(TrainDataProvider):
         
     '''
-    Hier ensteht eine Klasse, welche aus dem Trainigsdatendatz und dem 
-    Idealdatensatz die maximalen Abweichungen zwischen den  einzelnen 
-    Trainingsdatensätze y1-y4 und deren gefundenen idealen Funktionen ermittelt.
+    Creates a class that determines the maximum deviations from the training 
+    data and the associated ideal data.
     '''
         
     def __init__(self, y_train = 1):
@@ -244,9 +247,10 @@ class MaxDeltaFinder(TrainDataProvider):
   
         
 class TestDataProvider:
+    
     '''
-    Hier ensteht eine Klasse, welche zu einer Idealfunktion die passenden 
-    Testdaten aus dem kompletten Testdatensatz ermittelt.
+    Creates a class that finds the appropriate test data for the ideal 
+    functions.
     '''
          
     def __init__(self, y_idealfunktion):
@@ -302,7 +306,7 @@ class TestDataProvider:
         '''
         Zeigt den gefilterten Dataframe an
         '''
-        print('Found test data with max. difference for',
+        print('\nFound test data with max. difference for',
                   TestDataProvider(self.y_idealfunktion).find().columns[3],':')
         print(TestDataProvider(self.y_idealfunktion).find())
         print('\n')
@@ -311,15 +315,19 @@ class TestDataProvider:
         return TestDataProvider(self.y_idealfunktion).find()
      
 
-TestDataProvider('y36').show_dataframe()     
         
      
-# Visualisation envirement:
+# 2.Visualisation envirement:
         
 from matplotlib import pyplot as plt
 from matplotlib import style    
         
 class IdealGraphProvider:
+    
+    '''
+    Creates a class wich displays a plot with train data and the appropriate
+    ideal functions.
+    '''
         
         
         
@@ -402,6 +410,11 @@ class IdealGraphProvider:
     
      
 class TestDataGraphProvider(IdealGraphProvider):
+    
+    '''
+    Creates a class wich displays test data.
+    '''
+    
     def __init__(self, y_ideal = 1, nrows = 1, ncolumns = 1, figsize = (10,10), 
                  title ='Test data', font = 20):
         super().__init__(nrows , ncolumns, figsize, title , font)
@@ -438,6 +451,11 @@ class TestDataGraphProvider(IdealGraphProvider):
 
 
 class HTMLProvider(DataTableProvider):
+    
+    '''
+    Creates a class wich displays the tables in the database.
+    '''
+    
     def __intit__(self, tablename):
         super().__init__(tablename)
     
