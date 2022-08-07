@@ -289,7 +289,7 @@ class TestDataProvider:
         df_test.sort_values(by=['x'], inplace=True)                              # Laden der Idealdaten
         df_merged_test = df_test.merge(df_ideal, on = 'x')                      # Zusammenfügen vom Testdatensatz und Idealdatensatz, aber nur die gemeinsamen x - Werte
         df_merged_test = df_merged_test.filter(['x','y', self.y_idealfunktion])                  # Erstellung eines Dateframes mit den x und y- Werten des Trainingsdatensatzes und den y- Werten des Idealdatendatzes
-        df_merged_test.insert(loc=2, column = f'Diff {self.y_idealfunktion}',   # Einfügen einer Spalte, welche die Differenz zwischen den y- Werten vom Trainingsdatensatz und dem Idealdatensatz anzeigt
+        df_merged_test.insert(loc=3, column = f'Diff {self.y_idealfunktion}',   # Einfügen einer Spalte, welche die Differenz zwischen den y- Werten vom Trainingsdatensatz und dem Idealdatensatz anzeigt
         value =abs(df_merged_test['y']-df_merged_test[self.y_idealfunktion]))   
         #df_mask=df_merged_test[f'Diff {self.y_idealfunktion}']<= 0.71
         df_mask=df_merged_test[f'Diff {self.y_idealfunktion}']<= 0.71        # Erstellung einer Maske wo nur Werte < max. Abweichung einer ausgewählten Spalte erstellt
