@@ -1,28 +1,20 @@
 '''
 Description of main code:
-
 1__Dataframes__:    
 1.1 Show training data y1,y2,y3,y4
 1.2 Show column name of the found ideal function 
 1.3 Show ideal function data for y1,y2,y3,y4
 1.4 Show found max. differences
 1.5 Show found test data for each found ideal function
-
 2__Visualisation__:
 2.1 Train data vs. ideal functions
 2.2 Show Test data 
 2.3 Fitted test data vs. found ideal functions 
-
 3__Upload results__:
 3.1 Upload fitted test data table to sqlite
-
 4.__Visualisation of Sqlite tables__: 
 4.1 Show tables from sqlite
 '''
-
-
-
-
 # 1. Display dataframes and necessary information:
     
 # 1.1 Display each train dataset:
@@ -57,12 +49,14 @@ MaxDeltaFinder().average_maxdelte()
 
 # 1.5 Display found test data for each ideal function:
 from my_classes import TestDataProvider
-TestDataProvider(IdealFunktionProvider('y1').return_columname()).show_dataframe()
-TestDataProvider(IdealFunktionProvider('y2').return_columname()).show_dataframe()
-TestDataProvider(IdealFunktionProvider('y3').return_columname()).show_dataframe()
-TestDataProvider(IdealFunktionProvider('y4').return_columname()).show_dataframe()
-
-
+TestDataProvider(IdealFunktionProvider('y1').
+                 return_columname()).show_dataframe()
+TestDataProvider(IdealFunktionProvider('y2').
+                 return_columname()).show_dataframe()
+TestDataProvider(IdealFunktionProvider('y3').
+                 return_columname()).show_dataframe()
+TestDataProvider(IdealFunktionProvider('y4').
+                 return_columname()).show_dataframe()
 
 
 # 2. Visualisation 
@@ -83,8 +77,7 @@ TestDataGraphProvider(IdealFunktionProvider('y2').
 TestDataGraphProvider(IdealFunktionProvider('y3').
                       return_columname()).show_fitted_testdata()
 TestDataGraphProvider(IdealFunktionProvider('y4').
-                      return_columname()).show_fitted_testdata()
-                      
+                      return_columname()).show_fitted_testdata()                     
 
 # 3. Upload results:
 test1 = TestDataProvider(IdealFunktionProvider('y1').
