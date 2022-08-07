@@ -15,7 +15,10 @@ Description of main code:
 4.__Visualisation of Sqlite tables__: 
 4.1 Show tables from sqlite
 '''
-# 1. Display dataframes and necessary information:
+
+
+
+''' 1. Display dataframes and necessary information:'''
     
 # 1.1 Display each train dataset:
 from my_classes import TrainDataProvider
@@ -59,7 +62,7 @@ TestDataProvider(IdealFunktionProvider('y4').
                  return_columname()).show_dataframe()
 
 
-# 2. Visualisation 
+''' 2. Visualisation:'''
 
 # 2.1 Train data vs. ideal function:
 from my_classes import IdealGraphProvider
@@ -77,9 +80,11 @@ TestDataGraphProvider(IdealFunktionProvider('y2').
 TestDataGraphProvider(IdealFunktionProvider('y3').
                       return_columname()).show_fitted_testdata()
 TestDataGraphProvider(IdealFunktionProvider('y4').
-                      return_columname()).show_fitted_testdata()                     
+                      return_columname()).show_fitted_testdata()  
+                   
 
-# 3. Upload results:
+'''3. Upload results:'''
+
 test1 = TestDataProvider(IdealFunktionProvider('y1').
                          return_columname()).return_dataframe()
 test2 = TestDataProvider(IdealFunktionProvider('y2').
@@ -94,7 +99,9 @@ test4 = TestDataProvider(IdealFunktionProvider('y4').
 #DataTableProvider(test3).upload_as(f"fit{IdealFunktionProvider('y3').return_columname()}")
 #DataTableProvider(test4).upload_as(f"fit{IdealFunktionProvider('y4').return_columname()}")
 
-# 4. Display tables from sqlite:
+
+''' 4. Display tables from sqlite:'''
+
 from my_classes import HTMLProvider
 HTMLProvider('train').show()
 HTMLProvider('ideal').show()
