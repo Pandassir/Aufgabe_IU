@@ -94,10 +94,11 @@ test3 = TestDataProvider(IdealFunktionProvider('y3').
 test4 = TestDataProvider(IdealFunktionProvider('y4').
                          return_columname()).return_dataframe()
 
-#DataTableProvider(test1).upload_as(f"fit{IdealFunktionProvider('y1').return_columname()}")
-#DataTableProvider(test2).upload_as(f"fit{IdealFunktionProvider('y2').return_columname()}")
-#DataTableProvider(test3).upload_as(f"fit{IdealFunktionProvider('y3').return_columname()}")
-#DataTableProvider(test4).upload_as(f"fit{IdealFunktionProvider('y4').return_columname()}")
+from my_classes import DataTableProvider
+DataTableProvider(test1).upload_as(f"fit{IdealFunktionProvider('y1').return_columname()}")
+DataTableProvider(test2).upload_as(f"fit{IdealFunktionProvider('y2').return_columname()}")
+DataTableProvider(test3).upload_as(f"fit{IdealFunktionProvider('y3').return_columname()}")
+DataTableProvider(test4).upload_as(f"fit{IdealFunktionProvider('y4').return_columname()}")
 
 
 ''' 4. Display tables from sqlite:'''
