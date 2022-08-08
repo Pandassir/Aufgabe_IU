@@ -2,6 +2,11 @@
 
 import sqlalchemy as db
 import pandas as pd
+import sys
+import colorama
+from colorama import Fore
+from colorama import Style
+colorama.init()
     
 # 1.1 turn on database engine:   
 dbEngine=db.create_engine('sqlite:///database.db')                              # Ensure this is the correct path for the sqlite file.
@@ -45,7 +50,25 @@ class DataTableProvider:
         Loads the table into Python from Sqlite and converts the table with 
         help from pandas into a dataframe.
         '''    
-        return pd.read_sql(f'select * from {self.tablename}',dbEngine)
+        
+        
+        class DownloadError(Exception):                                         # User-defined Exceptions in case of wrong chosen table.
+            def __init__(self):
+                my_message = ("Please downlaod in my_classes 'train-','ideal-'"
+                "or 'test' table from database. Change and try again!!!")
+                self.my_message = my_message
+        try:
+            mylist = ['train','ideal','test']
+            if self.tablename in mylist:
+               return pd.read_sql(f'select * from {self.tablename}',dbEngine)
+            else:
+               raise DownloadError
+        except DownloadError:
+            
+            print(Fore.RED + Style.BRIGHT + "DownloadError:" + Style.RESET_ALL)
+            print(DownloadError().my_message)
+            sys.exit()
+        
             
     def upload_as(self, name):
         
@@ -59,14 +82,23 @@ class DataTableProvider:
         Uploads a dataframe to Sqlite as table
         '''
         
-        self.tablename.to_sql(name, dbEngine, if_exists='fail')
+        try:                                                                    # Exception in case of the table already exists in data base.
+            self.tablename.to_sql(name, dbEngine, if_exists='fail')
+        except ValueError:
+            print(Fore.RED + Style.BRIGHT + "ValueError:" + Style.RESET_ALL)
+            print('Problems in main code part 3 in .upload as:')
+            print(f'The table {name} already exist!!!')
+        else:
+            print(f'Successful upload of {name} table to database.')
+        finally:
+            print('The program continues.')
   
-
           
 df_train = DataTableProvider('train') .downlaod() 
 df_ideal = DataTableProvider('ideal') .downlaod() 
 df_test  = DataTableProvider('test') .downlaod() 
-df_test.sort_values(by=['x'], inplace=True)                                     # sort dataframes.
+df_test.sort_values(by=['x'], inplace=True)                                     # Sort dataframes.
+                             
 
             
             
@@ -95,7 +127,8 @@ class TrainDataProvider(DataTableProvider):
         
         super().__init__(tablename)
         self.y_train = y_train
-            
+        
+    
     def create_dataframe(self):
         
         '''            
@@ -114,9 +147,28 @@ class TrainDataProvider(DataTableProvider):
         -------
         Shows the createt dataframe.
         '''
-        print(f'Dataframe from train datas for x and {self.y_train}:')
-        print(df_train.filter(['x', self.y_train]))
-        print('\n')
+        
+        class Y_Error(Exception):                                               # User-defined Exceptions in case of wrong chosen y.
+            def __init__(self):
+                my_message = ("Y-column doesn't exists in train table! Please"
+                              " choose in main code part 1.1 between"
+                              " y1-y4. Change and try again!!!")
+                self.my_message = my_message
+        try:
+            mylist = ['y1','y2','y3','y4']
+            if self.y_train in mylist:
+                print(f'Dataframe from train datas for x and {self.y_train}:')
+                print(df_train.filter(['x', self.y_train]))
+                print('\n')
+            else:
+                raise Y_Error
+    
+        except Y_Error:
+            
+            print(Fore.RED + Style.BRIGHT + "Y_Error:" + Style.RESET_ALL)
+            print(Y_Error().my_message)
+            sys.exit()
+            
     
   
       
@@ -558,14 +610,18 @@ class HTMLProvider(DataTableProvider):
         -------
         Shows the tables from database through html file.
         '''
-        
-        df = pd.read_sql(f'select * from {self.tablename}',dbEngine)
-        html = df.to_html()
-        text_file = open(f'{self.tablename}.html', 'w')
-        text_file.write(html)
-        text_file.close()
-        import webbrowser
-        webbrowser.open(f'{self.tablename}.html')
+        try:                                                                    # Exception in case of wrong name.
+            df = pd.read_sql(f'select * from {self.tablename}',dbEngine)
+            html = df.to_html()
+            text_file = open(f'{self.tablename}.html', 'w')
+            text_file.write(html)
+            text_file.close()
+            import webbrowser
+            webbrowser.open(f'{self.tablename}.html')
+        except :
+            print(Fore.RED + Style.BRIGHT + "\nOperationalError:" + Style.RESET_ALL)
+            print(("Problem in part 4 in my_code: \nTable doesn't exist!" 
+                   "Please show in database for table names! "))
             
 
 
