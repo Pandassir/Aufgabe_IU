@@ -139,7 +139,7 @@ class TrainDataProvider(DataTableProvider):
         
         df_train = DataTableProvider(self.tablename).downlaod() 
         return df_train.filter(['x', self.y_train])                             # filter dataframes.
-        
+               
     def show_dataframe(self):
         
         '''        
@@ -169,8 +169,7 @@ class TrainDataProvider(DataTableProvider):
             print(Y_Error().my_message)
             sys.exit()
             
-    
-  
+
       
 class IdealFunktionProvider(TrainDataProvider):
     

@@ -86,7 +86,7 @@ TestDataGraphProvider(IdealFunktionProvider('y4').
 '''3. Upload results:'''
 
 test1 = TestDataProvider(IdealFunktionProvider('y1').
-                         return_columname()).return_dataframe()
+                         return_columname()).return_dataframe()                 
 test2 = TestDataProvider(IdealFunktionProvider('y2').
                          return_columname()).return_dataframe()
 test3 = TestDataProvider(IdealFunktionProvider('y3').
