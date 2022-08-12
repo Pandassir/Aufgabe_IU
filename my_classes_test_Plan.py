@@ -28,11 +28,11 @@
 #def return_dataframe(self):--> erhalte einen Dataframe --> teste, ob Dataframe erhalten, evt. ob richtigeb erhalten
 
 #class IdealGraphProvider:
-#def show_idealfunctions(self): --> erhalte ein plot --> teste, ob plot erhalten
+#def show_idealfunctions(self): --> nein
 
 #class TestDataGraphProvider(IdealGraphProvider):
-#def show_testdata(self):        --> erhalte ein plot --> teste, ob plot erhalten
-#def show_fitted_testdata(self): --> erhalte ein plot --> teste, ob plot erhalten
+#def show_testdata(self):        --> nein
+#def show_fitted_testdata(self): --> nein
 
 #class HTMLProvider(DataTableProvider):
 #def show(self): --> erhalte html --> teste, ob html erhalten, teste Exception

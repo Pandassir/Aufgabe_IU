@@ -67,8 +67,7 @@ class DataTableProvider:
             
             print(Fore.RED + Style.BRIGHT + "DownloadError:" + Style.RESET_ALL)
             print(DownloadError().my_message)
-            sys.exit()
-        
+            sys.exit()  
             
     def upload_as(self, name):
         
@@ -139,7 +138,7 @@ class TrainDataProvider(DataTableProvider):
         
         df_train = DataTableProvider(self.tablename).downlaod() 
         return df_train.filter(['x', self.y_train])                             # filter dataframes.
-               
+        
     def show_dataframe(self):
         
         '''        
@@ -169,9 +168,10 @@ class TrainDataProvider(DataTableProvider):
             print(Y_Error().my_message)
             sys.exit()
             
-
+    
+  
       
-class IdealFunktionProvider(TrainDataProvider):
+class IdealFunctionProvider(TrainDataProvider):
     
     ''' 
     Creates a class to find the ideal function for the training data. In 
@@ -223,8 +223,18 @@ class IdealFunktionProvider(TrainDataProvider):
         '''
 
         print(f'\nIdeal function dataframe for train dataset {self.y_train}:')
-        print(IdealFunktionProvider(self.y_train).find())
+        print(IdealFunctionProvider(self.y_train).find())
         print('\n')
+        
+    def return_columname(self):
+               
+        '''
+        Returns
+        -------
+        Columname of found ideal function.
+        '''
+        
+        return IdealFunctionProvider(self.y_train).find().columns[1]    
         
     def show_columnname(self):
        
@@ -235,20 +245,12 @@ class IdealFunktionProvider(TrainDataProvider):
         '''
             
         print(f'The {self.y_train} dataset of the training data includes the ideal function:'                  
-              ,((IdealFunktionProvider(self.y_train).find()).columns[1]))
+              ,((IdealFunctionProvider(self.y_train).find()).columns[1]))
             
         
-    def return_columname(self):
-               
-        '''
-        Returns
-        -------
-        Columname of found ideal function.
-        '''
-            
-        return IdealFunktionProvider(self.y_train).find().columns[1]
-            
+    
            
+  
              
 class MaxDeltaFinder(TrainDataProvider):
         
@@ -286,7 +288,7 @@ class MaxDeltaFinder(TrainDataProvider):
             
         import math
         df_train_xy = TrainDataProvider(self.y_train).create_dataframe()        # Dataframe with x and y from train data.
-        df_ideal = IdealFunktionProvider(self.y_train).find()                   # Dataframe with x and y from ideal data.
+        df_ideal = IdealFunctionProvider(self.y_train).find()                   # Dataframe with x and y from ideal data.
         maxdelta = abs((df_train_xy.iloc[:,1]-df_ideal.iloc[:,1]).max())        # Finds max. difference between y-values
         faktordelta = maxdelta*(math.sqrt(2))
         return faktordelta
@@ -300,10 +302,10 @@ class MaxDeltaFinder(TrainDataProvider):
         '''
           
         print(f'\nDie maximale Abweichung zwischen {self.y_train} und',
-                (IdealFunktionProvider(self.y_train).find()).columns[1],'ist:',
+                (IdealFunctionProvider(self.y_train).find()).columns[1],'ist:',
                  MaxDeltaFinder(self.y_train).find())
     
-    def average_maxdelte(self):
+    def average_maxdelta(self):
                     
         '''
         Returns
@@ -372,19 +374,7 @@ class TestDataProvider:
         print(TestDataProvider(self.y_idealfunktion).find())
         print('\n')
             
-    def return_dataframe(self):
-                    
-        '''
-        Returns
-        -------
-        The filtered dataframe.
-        '''
         
-        return TestDataProvider(self.y_idealfunktion).find()
-     
-
-        
-     
         
 # 2.Visualisation envirement:
         
@@ -460,16 +450,16 @@ class IdealGraphProvider:
                       ylabel='y - axis')
     
         axs[0][0].plot(df_train['x'],df_train['y1'])
-        axs[0][1].plot(df_ideal['x'],df_ideal[IdealFunktionProvider('y1').
+        axs[0][1].plot(df_ideal['x'],df_ideal[IdealFunctionProvider('y1').
                                     return_columname()], color = 'black')
         axs[1][0].plot(df_train['x'],df_train['y2'])
-        axs[1][1].plot(df_train['x'],df_ideal[IdealFunktionProvider('y2').
+        axs[1][1].plot(df_train['x'],df_ideal[IdealFunctionProvider('y2').
                                     return_columname()], color = 'black')
         axs[2][0].plot(df_train['x'],df_train['y3'])
-        axs[2][1].plot(df_train['x'],df_ideal[IdealFunktionProvider('y3').
+        axs[2][1].plot(df_train['x'],df_ideal[IdealFunctionProvider('y3').
                                     return_columname()], color = 'black')
         axs[3][0].plot(df_train['x'],df_train['y4'])
-        axs[3][1].plot(df_train['x'],df_ideal[IdealFunktionProvider('y4').
+        axs[3][1].plot(df_train['x'],df_ideal[IdealFunctionProvider('y4').
                                     return_columname()], color = 'black')
             
         axs[0][0].grid(visible=True, which='major', axis='both', 
@@ -499,7 +489,7 @@ class IdealGraphProvider:
         axs[3][1].legend(['ideal function to y4'])
         plt.show()
                 
-    
+
      
 class TestDataGraphProvider(IdealGraphProvider):
     
@@ -553,7 +543,7 @@ class TestDataGraphProvider(IdealGraphProvider):
         axs.grid(visible=True, which='major', axis='both', color='white', 
                  linestyle='-', linewidth=1)
         axs.set_facecolor('LightGray')
-        axs.legend(['test data'], fontsize = 15, facecolor='white')                
+        axs.legend(['Test data'], fontsize = 15, facecolor='white')                
         plt.show()
             
     def show_fitted_testdata(self):
@@ -609,6 +599,7 @@ class HTMLProvider(DataTableProvider):
         -------
         Shows the tables from database through html file.
         '''
+        
         try:                                                                    # Exception in case of wrong name.
             df = pd.read_sql(f'select * from {self.tablename}',dbEngine)
             html = df.to_html()
@@ -621,6 +612,9 @@ class HTMLProvider(DataTableProvider):
             print(Fore.RED + Style.BRIGHT + "\nOperationalError:" + Style.RESET_ALL)
             print(("Problem in part 4 in my_code: \nTable doesn't exist!" 
                    "Please show in database for table names! "))
+            
+       
+            
             
 
 
