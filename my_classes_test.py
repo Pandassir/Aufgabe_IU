@@ -74,19 +74,23 @@ class Test_IdealFunctionProvider(unittest.TestCase):
     def test_find_if_right_table(self): 
        
         self.assertEqual(list((self.ideal1.find()).columns), 
-                    (['x','y36']),'Dataframe train should have x,y36 as columns!')
+                    (['x','y36']),'Dataframe train should have x,y36 as'
+                    ' columns!')
         self.assertEqual(list((self.ideal2.find()).columns), 
-                    (['x','y11']),'Dataframe train should have x,y11 as columns!')    
+                    (['x','y11']),'Dataframe train should have x,y11 as'
+                    ' columns!')    
         self.assertEqual(list((self.ideal3.find()).columns), 
-                    (['x','y2']),'Dataframe train should have x,y32 as columns!')
+                    (['x','y2']),'Dataframe train should have x,y32 as'
+                    ' columns!')
         self.assertEqual(list((self.ideal4.find()).columns), 
-                    (['x','y33']),'Dataframe train should have x,y333 as columns!')
+                    (['x','y33']),'Dataframe train should have x,y333'
+                    ' as columns!')
          
     def test_return_columnname_if_right(self):
-        self.assertEqual(self.ideal1.return_columname(), 'y36', 'Should be y36!')
-        self.assertEqual(self.ideal2.return_columname(), 'y11', 'Should be y11!')
-        self.assertEqual(self.ideal3.return_columname(), 'y2', 'Should be y2!')
-        self.assertEqual(self.ideal4.return_columname(), 'y33', 'Should be y33!')
+        self.assertEqual(self.ideal1.return_columname(),'y36','Should be y36!')
+        self.assertEqual(self.ideal2.return_columname(),'y11','Should be y11!')
+        self.assertEqual(self.ideal3.return_columname(),'y2','Should be y2!')
+        self.assertEqual(self.ideal4.return_columname(),'y33','Should be y33!')
 
 
 from my_classes import MaxDeltaFinder
@@ -97,10 +101,14 @@ class Test_MaxDeltaFinder(unittest.TestCase):
         mdelta2 = MaxDeltaFinder('y2')
         mdelta3 = MaxDeltaFinder('y3')
         mdelta4 = MaxDeltaFinder('y4')
-        self.assertEqual(mdelta1.find(),0.7068154531926907, 'Should be 0.7068154531926907!' )
-        self.assertEqual(mdelta2.find(),0.7025643272242058, 'Should be 0.7025643272242058!' )
-        self.assertEqual(mdelta3.find(),0.7069316449789833, 'Should be 0.7069316449789833!' )
-        self.assertEqual(mdelta4.find(),0.6999070199405059, 'Should be 0.6999070199405059!' )
+        self.assertEqual(mdelta1.find(),0.7068154531926907, 'Should be '
+                         '0.7068154531926907!' )
+        self.assertEqual(mdelta2.find(),0.7025643272242058, 'Should be '
+                         '0.7025643272242058!' )
+        self.assertEqual(mdelta3.find(),0.7069316449789833, 'Should be '
+                         '0.7069316449789833!' )
+        self.assertEqual(mdelta4.find(),0.6999070199405059, 'Should be '
+                         '0.6999070199405059!' )
     
     
     
